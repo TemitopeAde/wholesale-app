@@ -42,3 +42,4 @@ coverage/
 *.seed
 *.sublime-workspace
 *.sublime-project
+.vercel
