@@ -16,7 +16,7 @@ app.post("/v1/get-eligible-triggers", async (req, res) => {
 
   // Define Happy Hour conditions (16:00-18:00 on weekdays)
   const isWeekday = currentDay >= 1 && currentDay <= 5;
-  const isHappyHour = currentHour >= 16 && currentHour < 18;
+  const isHappyHour = currentHour >= 16 && currentHour < 18
 
   if (isWeekday && isHappyHour) {
     res.json({
