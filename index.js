@@ -33,9 +33,9 @@ app.post("/v1/getEligibleTriggers", async (req, res) => {
   }
 });
 
-app.get("/v1/get-violations", async (req, res) => {
+app.post("/v1/get-violations", async (req, res) => {
   console.log(req);
-  
+
   try {
     res.status(200).json({
       data: true
