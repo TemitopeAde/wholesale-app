@@ -34,7 +34,7 @@ app.post("/v1/getEligibleTriggers", async (req, res) => {
 });
 
 app.post("/v1/get-violations", async (req, res) => {
-  console.log(req);
+  console.log(req.body);
 
   try {
     res.status(200).json({
