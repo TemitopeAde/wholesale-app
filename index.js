@@ -33,16 +33,18 @@ app.post("/v1/getEligibleTriggers", async (req, res) => {
   }
 });
 
-app.get("/", async (req, res) => {
+app.get("/v1/get-violations", async (req, res) => {
   console.log(req);
-
+  
   try {
     res.status(200).json({
       data: true
     });
   } catch (error) {
     console.error("Error forwarding request:", error);
-    res.status(500).send("An error occurred while processing your request.");
+    res.status(500).send({
+      error
+    });
   }
 });
 
