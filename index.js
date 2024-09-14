@@ -33,6 +33,32 @@ app.post("/v1/getEligibleTriggers", async (req, res) => {
   }
 });
 
+app.post("/v1/get-eligible-triggers", async (req, res) => {
+  console.log(req);
+  
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+  // Define Happy Hour conditions (16:00-18:00 on weekdays)
+  const isWeekday = currentDay >= 1 && currentDay <= 5;
+  const isHappyHour = currentHour >= 16 && currentHour < 18
+
+  if (isWeekday && isHappyHour) {
+    res.json({
+      triggers: [
+        {
+          id: "happy-hour-trigger",
+          name: "Happy Hour, weekdays, 16:00-18:00",
+          discountId: "happy-hour-discount"
+        }
+      ]
+    });
+  } else {
+    res.json({ triggers: [] });
+  }
+});
+
 app.post("/v1/get-violations", async (req, res) => {
   console.log(req.body);
 
