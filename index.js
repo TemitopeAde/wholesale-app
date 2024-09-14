@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const app = express();
 const port = 3000;
@@ -7,8 +6,11 @@ const cors = require("cors");
 // Allow all origins
 app.use(cors());
 
+// Middleware to parse text/plain bodies
+app.use(express.text()); // For parsing text/plain
+
 app.post("/v1/getEligibleTriggers", async (req, res) => {
-  console.log(req);
+  console.log(req.body); // Log the plain text body
   
   const now = new Date();
   const currentHour = now.getHours();
@@ -16,7 +18,7 @@ app.post("/v1/getEligibleTriggers", async (req, res) => {
 
   // Define Happy Hour conditions (16:00-18:00 on weekdays)
   const isWeekday = currentDay >= 1 && currentDay <= 5;
-  const isHappyHour = currentHour >= 16 && currentHour < 18
+  const isHappyHour = currentHour >= 16 && currentHour < 18;
 
   if (isWeekday && isHappyHour) {
     res.json({
@@ -34,7 +36,7 @@ app.post("/v1/getEligibleTriggers", async (req, res) => {
 });
 
 app.post("/v1/get-eligible-triggers", async (req, res) => {
-  console.log(req);
+  console.log(req.body); // Log the plain text body
   
   const now = new Date();
   const currentHour = now.getHours();
@@ -42,7 +44,7 @@ app.post("/v1/get-eligible-triggers", async (req, res) => {
 
   // Define Happy Hour conditions (16:00-18:00 on weekdays)
   const isWeekday = currentDay >= 1 && currentDay <= 5;
-  const isHappyHour = currentHour >= 16 && currentHour < 18
+  const isHappyHour = currentHour >= 16 && currentHour < 18;
 
   if (isWeekday && isHappyHour) {
     res.json({
@@ -60,7 +62,7 @@ app.post("/v1/get-eligible-triggers", async (req, res) => {
 });
 
 app.post("/v1/get-violations", async (req, res) => {
-  console.log(req.body);
+  console.log(req.body); // Log the plain text body
 
   try {
     res.status(200).json({
