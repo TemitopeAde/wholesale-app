@@ -7,7 +7,7 @@ const cors = require("cors");
 // Allow all origins
 app.use(cors());
 
-app.post("/v1/get-eligible-triggers", async (req, res) => {
+app.post("/v1/getEligibleTriggers", async (req, res) => {
   console.log(req);
   
   const now = new Date();
