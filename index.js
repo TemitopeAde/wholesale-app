@@ -4,7 +4,7 @@ const compression = require("compression");
 const pako = require("pako");
 
 const app = express();
-const port = 3000;
+const port = 5000;
 const cors = require("cors");
 
 // Allow all origins
@@ -117,6 +117,23 @@ app.post("/v1/get-violations", async (req, res) => {
     });
   }
 });
+
+
+app.post("/v1/list-triggers", async (req, res) => {
+  console.log(req.body); // Log the plain text body (decompressed if needed)
+
+  try {
+    res.status(200).json({
+      data: true
+    });
+  } catch (error) {
+    console.error("Error forwarding request:", error);
+    res.status(500).send({
+      error
+    });
+  }
+});
+
 
 // Start the server
 app.listen(port, () => {
