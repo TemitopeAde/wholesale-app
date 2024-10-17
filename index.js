@@ -118,7 +118,6 @@ app.post("/v1/get-violations", async (req, res) => {
   }
 });
 
-
 app.post("/v1/list-triggers", async (req, res) => {
   console.log(req.body); // Log the plain text body (decompressed if needed)
 
@@ -134,6 +133,24 @@ app.post("/v1/list-triggers", async (req, res) => {
   }
 });
 
+// Route to fetch parts data from the external API
+app.get('/api/part', async (req, res) => {
+  const { page = 1, code = '' } = req.query;
+  const token = '383f78c8-0e4e-49ef-bd54-81075f631f5a';
+
+  try {
+    // Fetch data from Britpart API using Axios
+    const response = await axios.get(
+      `https://www.britpart.com/api/v1/part/getall?token=${token}&page=${page}&code=${code}`
+    );
+
+    // Send the API response data back to the client
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Error fetching parts:', error);
+    res.status(500).json({ error: 'Error fetching parts' });
+  }
+});
 
 // Start the server
 app.listen(port, () => {
