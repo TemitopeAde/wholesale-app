@@ -135,6 +135,8 @@ app.post("/v1/list-triggers", async (req, res) => {
 
 // Route to fetch parts data from the external API
 app.get('/api/part', async (req, res) => {
+  console.log(req.query);
+  
   const { page = 1, code = '' } = req.query;
   const token = '383f78c8-0e4e-49ef-bd54-81075f631f5a';
 
