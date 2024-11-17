@@ -61,9 +61,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
     const instanceResponse = await axios.get(
       "https://www.wixapis.com/apps/v1/instance",
-      { headers: instanceHeader } // Pass headers as part of the request
+      { headers: instanceHeader } 
     );
-    console.log(instanceResponse);
+    console.log(instanceResponse.data);
   
   } catch (error) {
     console.log(error);
