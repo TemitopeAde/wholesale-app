@@ -3,10 +3,36 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const pako = require("pako");
 const axios = require('axios');
+const { AppStrategy, createClient } = require("@wix/sdk");
+const { appInstances } = require("@wix/app-management");
+
+
+const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgDiCeyVSupN1GmiIfEvZ
+kk1yTbBMablRGTQtYZ0Dzw6JUfBiyKtMdguFWoKIZDcQ5lhqTbSQrboQ27p6bNGT
+/klVwyuRO3KCOiBUkrCKMpWRzurT1UggUuPvJlsu+Vm3mhovedD7GmZ8azMrcRkG
+jKCywVpeRICsALMZz0pV+cobpDzLXjd3+ZeQ326WoWKbsfX58lCug8uKIBxM9j5q
+6UKDmkV5ZpAb6UJPKLb8nil9mp0Zr49ZmKToQ6RudkV0jwyN65UPYX5iZteM6rdw
+gknFk2AZU8bE8IHbYWhYXg49PHr0d9UfbbsT/n8hRSlFN84tSQNtKIwIAs/lUiZT
+MQIDAQAB
+-----END PUBLIC KEY-----`;
+const APP_ID = "58199573-6f93-4db3-8145-fd7ee8f9349c";
 
 const app = express();
 const port = 5000;
 const cors = require("cors");
+
+const client = createClient({
+  auth: AppStrategy({
+    appId: APP_ID,
+    publicKey: PUBLIC_KEY,
+  }),
+  modules: { appInstances },
+});
+
+client.appInstances.onAppInstanceInstalled((event) => {
+  console.log(`onAppInstanceInstalled invoked with data:`, event);
+});
 
 // Allow all origins
 app.use(cors());
@@ -153,6 +179,21 @@ app.get('/api/part', async (req, res) => {
     console.error('Error fetching parts:', error);
     res.status(500).json({ error: 'Error fetching parts' });
   }
+});
+
+app.post("/webhook", express.text(), async (request, response) => {
+  console.log("Webhook payload received:", request.body);
+  try {
+    await client.webhooks.process(request.body);
+  } catch (err) {
+    console.error(err);
+    response
+      .status(500)
+      .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
+    return;
+  }
+
+  response.status(200).send();
 });
 
 // Start the server
