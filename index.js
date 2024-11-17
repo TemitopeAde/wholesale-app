@@ -184,7 +184,8 @@ app.get('/api/part', async (req, res) => {
 app.post("/webhook", express.text(), async (request, response) => {
   console.log("Webhook payload received:", request.body);
   try {
-    await client.webhooks.process(request.body);
+    const res = await client.webhooks.process(request.body);
+    console.log(res);
   } catch (err) {
     console.error(err);
     response
