@@ -167,6 +167,19 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   };
 
   try {
+    const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/9893714/3nzvfel/";
+    const zapierResponse = await axios.post(zapierWebhookUrl, request.body, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    console.log("Zapier Webhook Forwarded:", zapierResponse.data);
+  } catch (error) {
+    console.log(error);
+  }
+
+  try {
     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
     const accessToken = response.data.access_token; 
 
@@ -333,12 +346,11 @@ app.get('/api/part', async (req, res) => {
   }
 });
 
-
-// https://hooks.zapier.com/hooks/catch/9893714/3p14ip0/
 app.post("/webhook", express.text(), async (request, response) => {
-  console.log("Webhook payload received:", request.body);
+  
   try {
     const res = await client.webhooks.process(request.body);
+    
     console.log(res);
   } catch (err) {
     console.error(err);
