@@ -48,14 +48,20 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     "Content-Type": "application/json",
   };
 
+  
+
   try {
     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
- 
     const accessToken = response.data.access_token; 
-    console.log("Access Token:", accessToken); 
-    
 
-    console.log(`onAppInstanceInstalled invoked with data:`, event);
+    const instanceHeader = {
+      "Content-Type": "application/json",
+      "Authorization": `${accessToken}`
+    }
+
+    const instance = await axios.get("https://www.wixapis.com/apps/v1/instance", {}, { headers: instanceHeader});
+    console.log(instance);
+  
   } catch (error) {
     console.log(error);
   }
