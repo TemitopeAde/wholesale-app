@@ -48,11 +48,17 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     "Content-Type": "application/json",
   };
 
-  const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
-  console.log(response);
-  
+  try {
+    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+ 
+    const accessToken = response.data.access_token; 
+    console.log("Access Token:", accessToken); 
+    
 
-  console.log(`onAppInstanceInstalled invoked with data:`, event);
+    console.log(`onAppInstanceInstalled invoked with data:`, event);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Allow all origins
