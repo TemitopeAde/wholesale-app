@@ -59,8 +59,11 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       "Authorization": `${accessToken}`
     }
 
-    const instance = await axios.get("https://www.wixapis.com/apps/v1/instance", {}, { headers: instanceHeader});
-    console.log(instance);
+    const instanceResponse = await axios.get(
+      "https://www.wixapis.com/apps/v1/instance",
+      { headers: instanceHeader } // Pass headers as part of the request
+    );
+    console.log(instanceResponse);
   
   } catch (error) {
     console.log(error);
