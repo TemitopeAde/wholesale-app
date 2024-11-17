@@ -30,10 +30,128 @@ const client = createClient({
   modules: { appInstances },
 });
 
-client.appInstances.onAppInstanceInstalled(async (event) => {
+
+client.appInstances.onAppInstanceRemoved(async (event) => {
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
   const wixUserId = event.metadata.identity?.wixUserId
+  const memberId = event.metadata.identity?.memberId;
+  const identityType = event.metadata.identity?.identityType;
+
+
+  const payload = {
+    grant_type: "client_credentials",
+    client_id: appId,
+    client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
+    instance_id: instanceId,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+    const accessToken = response.data.access_token; 
+
+    const instanceHeader = {
+      "Content-Type": "application/json",
+      "Authorization": `${accessToken}`
+    }
+
+    const instanceResponse = await axios.get(
+      "https://www.wixapis.com/apps/v1/instance",
+      { headers: instanceHeader } 
+    );
+    console.log(instanceResponse.data);
+  
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
+  const appId = event.data?.appId;
+  const instanceId = event.metadata?.instanceId;
+  const wixUserId = event.metadata.identity?.wixUserId
+  const memberId = event.metadata.identity?.memberId;
+  const identityType = event.metadata.identity?.identityType;
+
+
+  const payload = {
+    grant_type: "client_credentials",
+    client_id: appId,
+    client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
+    instance_id: instanceId,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+    const accessToken = response.data.access_token; 
+
+    const instanceHeader = {
+      "Content-Type": "application/json",
+      "Authorization": `${accessToken}`
+    }
+
+    const instanceResponse = await axios.get(
+      "https://www.wixapis.com/apps/v1/instance",
+      { headers: instanceHeader } 
+    );
+    console.log(instanceResponse.data);
+  
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
+  const appId = event.data?.appId;
+  const instanceId = event.metadata?.instanceId;
+  const wixUserId = event.metadata.identity?.wixUserId
+  const memberId = event.metadata.identity?.memberId;
+  const identityType = event.metadata.identity?.identityType;
+
+
+  const payload = {
+    grant_type: "client_credentials",
+    client_id: appId,
+    client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
+    instance_id: instanceId,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+    const accessToken = response.data.access_token; 
+
+    const instanceHeader = {
+      "Content-Type": "application/json",
+      "Authorization": `${accessToken}`
+    }
+
+    const instanceResponse = await axios.get(
+      "https://www.wixapis.com/apps/v1/instance",
+      { headers: instanceHeader } 
+    );
+    console.log(instanceResponse.data);
+  
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+client.appInstances.onAppInstanceInstalled(async (event) => {
+  const appId = event.data?.appId;
+  const instanceId = event.metadata?.instanceId;
+  const wixUserId = event.metadata.identity?.wixUserId;
   const memberId = event.metadata.identity?.memberId;
   const identityType = event.metadata.identity?.identityType;
 
@@ -47,8 +165,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   const headers = {
     "Content-Type": "application/json",
   };
-
-  
 
   try {
     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });

@@ -1,113 +1,77 @@
-ue,
-    _removedConnection: false,
-    _removedContLen: false,
-    _removedTE: false,
-    strictContentLength: false,
-    _contentLength: null,
-    _hasBody: true,
-    _trailer: '',
-    finished: false,
-    _headerSent: false,
-    _closed: false,
-    socket: <ref *1> Socket {
-      connecting: false,
-      _hadError: false,
-      _parent: null,
-      _host: null,
-      _closeAfterHandlingError: false,
-      _events: [Object],
-      _readableState: [ReadableState],
-      _writableState: [WritableState],
-      allowHalfOpen: true,
-      _maxListeners: undefined,
-      _eventsCount: 8,
-      _sockname: null,
-      _pendingData: null,
-      _pendingEncoding: '',
-      server: [Server],
-      _server: [Server],
-      parser: [HTTPParser],
-      on: [Function: socketListenerWrap],
-      addListener: [Function: socketListenerWrap],
-      prependListener: [Function: socketListenerWrap],
-      setEncoding: [Function: socketSetEncoding],
-      _paused: false,
-      _httpMessage: [Circular *3],
-      [Symbol(async_id_symbol)]: 285,
-      [Symbol(kHandle)]: [TCP],
-      [Symbol(lastWriteQueueSize)]: 0,
-      [Symbol(timeout)]: null,
-      [Symbol(kBuffer)]: null,
-      [Symbol(kBufferCb)]: null,
-      [Symbol(kBufferGen)]: null,
-      [Symbol(shapeMode)]: true,
-      [Symbol(kCapture)]: false,
-      [Symbol(kSetNoDelay)]: true,
-      [Symbol(kSetKeepAlive)]: false,
-      [Symbol(kSetKeepAliveInitialDelay)]: 0,
-      [Symbol(kBytesRead)]: 0,
-      [Symbol(kBytesWritten)]: 0
+{
+  "instance": {
+    "instanceId": "3557c1cc-57ce-4d32-86d9-be7b955ef4c9",
+    "appName": "Request a Quote",
+    "appVersion": "^21.0.0",
+    "isFree": false,
+    "billing": {
+      "packageName": "pro-plan",
+      "billingCycle": "YEARLY",
+      "timeStamp": "2023-06-17T18:43:15.000Z",
+      "expirationDate": "2025-06-17T18:43:15.000Z",
+      "autoRenewing": true,
+      "invoiceId": "1121711449"
     },
-    _header: null,
-    _keepAliveTimeout: 5000,
-    _onPendingData: [Function: bound updateOutgoingData],
-    req: [Circular *2],
-    _sent100: false,
-    _expect_continue: false,
-    _maxRequestsPerSocket: 0,
-    writeHead: [Function (anonymous)],
-    locals: [Object: null prototype] {},
-    [Symbol(shapeMode)]: false,
-    [Symbol(kCapture)]: false,
-    [Symbol(kBytesWritten)]: 0,
-    [Symbol(kNeedDrain)]: false,
-    [Symbol(corked)]: 0,
-    [Symbol(kOutHeaders)]: [Object: null prototype] {
-      'x-powered-by': [Array],
-      'access-control-allow-origin': [Array]
+    "permissions": [],
+    "availablePlans": [],
+    "originInstanceId": "",
+    "isOriginSiteTemplate": false,
+    "copiedFromTemplate": false,
+    "freeTrialAvailable": true
+  },
+  "site": {
+    "siteDisplayName": "Nutrition Test Dev ",
+    "locale": "en",
+    "paymentCurrency": "USD",
+    "multilingual": {
+      "isMultiLingual": false,
+      "supportedLanguages": []
     },
-    [Symbol(errored)]: null,
-    [Symbol(kHighWaterMark)]: 16384,
-    [Symbol(kRejectNonStandardBodyWrites)]: false,
-    [Symbol(kUniqueHeaders)]: null
+    "url": "https://www.dev-site-1x2565.wix-dev-center-test.org/",
+    "installedWixApps": [
+      "chat",
+      "forms",
+      "members_area",
+      "bookings",
+      "stores"
+    ],
+    "siteId": "4f978f86-d9b9-4850-bc79-87d43b84f91f"
+  }
+}
+
+
+{
+  "instance": {
+    "instanceId": "dca261e6-ab6b-4457-a3eb-bf4bdc75bde7",
+    "appName": "Request a Quote",
+    "appVersion": "latest",
+    "isFree": true,
+    "permissions": [],
+    "availablePlans": [],
+    "originInstanceId": "",
+    "isOriginSiteTemplate": false,
+    "copiedFromTemplate": false,
+    "freeTrialAvailable": true
   },
-  route: Route {
-    path: '/v1/get-violations',
-    stack: [ [Layer] ],
-    methods: { post: true }
-  },
-  [Symbol(shapeMode)]: true,
-  [Symbol(kCapture)]: false,
-  [Symbol(kHeaders)]: {
-    'x-vercel-deployment-url': 'wholesale-fczpv6aoz-temitopes-projects-d98c620e.vercel.app',
-    host: 'wholesale-app.vercel.app',
-    'x-vercel-id': 'pdx1::hnx9j-1726319600458-e60311202499',
-    'x-real-ip': '54.212.48.139',
-    accept: '*/*',
-    'x-vercel-ip-city': 'Boardman',
-    'x-vercel-ip-continent': 'NA',
-    'x-vercel-ip-country': 'US',
-    'x-vercel-ip-latitude': '45.8234',
-    'x-vercel-ip-longitude': '-119.7257',
-    'x-vercel-ip-timezone': 'America/Los_Angeles',
-    'x-vercel-ja4-digest': 't12d091100_8d6d9b33cd7_6d6c278f61f2',
-    'x-vercel-proxied-for': '54.212.48.139',
-    'x-forwarded-for': '54.212.48.139',
-    'x-vercel-ip-as-number': '16509',
-    'x-vercel-ip-country-region': 'OR',
-    'content-type': 'text/plain; charset=utf-8',
-    'content-length': '12103',
-    forwarded: 'for=54.212.48.139;host=wholesale-app.vercel.app;proto=https;sig=0QmVhcmVyIGY2MTI1ZTg1YzIxMTRkYjQzMWM5OTE2NGVlOGJkMjg1ZjE3MzRlNmQxYzFhMDA0NDM0ZDU1N2RhMWRiNmJjYjU=;exp=1726319900',
-    'x-vercel-forwarded-for': '54.212.48.139',
-    'x-vercel-proxy-signature': 'Bearer f6125e85c2114db431c99164ee8bd285f1734e6d1c1a004434d557da1db6bcb5',
-    'x-vercel-proxy-signature-ts': '1726319900',
-    'x-forwarded-host': 'wholesale-app.vercel.app',
-    'user-agent': 'Wix',
-    'x-forwarded-proto': 'https',
-    'accept-encoding': 'gzip, deflate',
-    connection: 'close'
-  },
-  [Symbol(kHeadersCount)]: 62,
-  [Symbol(kTrailers)]: null,
-  [Symbol(kTrailersCount)]: 0
+  "site": {
+    "siteDisplayName": "Dev Site 1x8737 2",
+    "locale": "en",
+    "paymentCurrency": "USD",
+    "multilingual": {
+      "isMultiLingual": false,
+      "supportedLanguages": []
+    },
+    "installedWixApps": [
+      "members_area",
+      "wix_forms",
+      "stores",
+      "chat"
+    ],
+    "ownerEmail": "devcentertesting@wix.com",
+    "ownerInfo": {
+      "email": "devcentertesting@wix.com",
+      "emailStatus": "VERIFIED_OPT_IN"
+    },
+    "siteId": "898fa018-9bdc-4ac6-a61b-77ac1bad727d"
+  }
 }
