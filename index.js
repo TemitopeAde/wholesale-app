@@ -30,7 +30,28 @@ const client = createClient({
   modules: { appInstances },
 });
 
-client.appInstances.onAppInstanceInstalled((event) => {
+client.appInstances.onAppInstanceInstalled(async (event) => {
+  const appId = event.data?.appId;
+  const instanceId = event.metadata?.instanceId;
+  const wixUserId = event.metadata.identity?.wixUserId
+  const memberId = event.metadata.identity?.memberId;
+  const identityType = event.metadata.identity?.identityType;
+
+  const payload = {
+    grant_type: "client_credentials",
+    client_id: appId,
+    client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
+    instance_id: instanceId,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+  console.log(response);
+  
+
   console.log(`onAppInstanceInstalled invoked with data:`, event);
 });
 
@@ -181,6 +202,8 @@ app.get('/api/part', async (req, res) => {
   }
 });
 
+
+// https://hooks.zapier.com/hooks/catch/9893714/3p14ip0/
 app.post("/webhook", express.text(), async (request, response) => {
   console.log("Webhook payload received:", request.body);
   try {
