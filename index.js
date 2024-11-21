@@ -392,9 +392,9 @@ app.post("/webhook", express.text(), async (request, response) => {
   
   try {
     const res = await client.webhooks.process(request.body);
-    console.log(res);
+    console.log(`response ${res}`);
   } catch (err) {
-    console.error(err);
+    console.log(err)
     response
       .status(500)
       .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
@@ -404,30 +404,6 @@ app.post("/webhook", express.text(), async (request, response) => {
   response.status(200).send();
 });
 
-app.get("/create-contact", async (req, res) => {
- 
-  try {
-    const info = {
-      name: {
-        first: 'John',
-        last: 'Doe'
-      },
-      emails: ['john.doe@example.com'],
-      phones: ['+1234567890'],
-      extendedFields : [
-        {
-          fieldName: 'custom.test', 
-          value: 'my test'
-        }
-      ]
-    };
-    
-    const response = await contactClient.contacts.createContact(info);
-    res.status(201).json({response})
-  } catch (error) {
-    res.status(500).json({ error })
-  }
-})
 
 // Start the server
 app.listen(port, () => {
