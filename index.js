@@ -5,6 +5,7 @@ const pako = require("pako");
 const axios = require('axios');
 const { AppStrategy, createClient } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
+const {contacts} = require("@wix/crm")
 
 
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
@@ -167,37 +168,78 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   };
 
   try {
-    const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/9893714/3nzvfel/";
-    const zapierResponse = await axios.post(zapierWebhookUrl, request.body, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-
-    console.log("Zapier Webhook Forwarded:", zapierResponse.data);
-  } catch (error) {
-    console.log(error);
-  }
-
-  try {
+    // Get the access token
     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
-    const accessToken = response.data.access_token; 
+    const accessToken = response.data.access_token;
 
+    // Fetch instance data
     const instanceHeader = {
       "Content-Type": "application/json",
-      "Authorization": `${accessToken}`
-    }
+      "Authorization": `${accessToken}`,
+    };
 
     const instanceResponse = await axios.get(
       "https://www.wixapis.com/apps/v1/instance",
-      { headers: instanceHeader } 
+      { headers: instanceHeader }
     );
-    console.log(instanceResponse.data);
-  
+
+    // Log instanceResponse data
+    console.log("Instance Response:", instanceResponse.data);
+
+    // Send instanceResponse.data to the specified endpoint
+    const postResponse = await axios.post(
+      "https://www.wixcustomsolutions.com/_functions-dev/contact",
+      instanceResponse.data, 
+      { headers: { "Content-Type": "application/json" } } 
+    );
+
+    console.log("Post Response:", postResponse.data);
+
   } catch (error) {
-    console.log(error);
+    console.error("Error:", error.response ? error.response.data : error.message);
   }
 });
+
+
+
+
+// client.appInstances.onAppInstanceInstalled(async (event) => {
+//   const appId = event.data?.appId;
+//   const instanceId = event.metadata?.instanceId;
+//   const wixUserId = event.metadata.identity?.wixUserId;
+//   const memberId = event.metadata.identity?.memberId;
+//   const identityType = event.metadata.identity?.identityType;
+
+//   const payload = {
+//     grant_type: "client_credentials",
+//     client_id: appId,
+//     client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
+//     instance_id: instanceId,
+//   };
+
+//   const headers = {
+//     "Content-Type": "application/json",
+//   };
+
+//   try {
+//     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+//     const accessToken = response.data.access_token; 
+
+//     const instanceHeader = {
+//       "Content-Type": "application/json",
+//       "Authorization": `${accessToken}`
+//     }
+
+//     const instanceResponse = await axios.get(
+//       "https://www.wixapis.com/apps/v1/instance",
+//       { headers: instanceHeader } 
+//     );
+//     console.log(instanceResponse.data);
+  
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 // Allow all origins
 app.use(cors());
@@ -350,7 +392,6 @@ app.post("/webhook", express.text(), async (request, response) => {
   
   try {
     const res = await client.webhooks.process(request.body);
-    
     console.log(res);
   } catch (err) {
     console.error(err);
@@ -362,6 +403,31 @@ app.post("/webhook", express.text(), async (request, response) => {
 
   response.status(200).send();
 });
+
+app.get("/create-contact", async (req, res) => {
+ 
+  try {
+    const info = {
+      name: {
+        first: 'John',
+        last: 'Doe'
+      },
+      emails: ['john.doe@example.com'],
+      phones: ['+1234567890'],
+      extendedFields : [
+        {
+          fieldName: 'custom.test', 
+          value: 'my test'
+        }
+      ]
+    };
+    
+    const response = await contactClient.contacts.createContact(info);
+    res.status(201).json({response})
+  } catch (error) {
+    res.status(500).json({ error })
+  }
+})
 
 // Start the server
 app.listen(port, () => {
