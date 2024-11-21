@@ -196,7 +196,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     console.log("Post Response:", postResponse.data);
 
   } catch (error) {
-    console.error("Error:", error.response ? error.response.data : error.message);
+    console.error(`Errors ${error}`);
   }
 });
 
