@@ -177,21 +177,21 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       "Authorization": `${accessToken}`,
     };
 
-    // const instanceResponse = await axios.get(
-    //   "https://www.wixapis.com/apps/v1/instance",
-    //   { headers: instanceHeader }
-    // );
+    const instanceResponse = await axios.get(
+      "https://www.wixapis.com/apps/v1/instance",
+      { headers: instanceHeader }
+    );
 
-    // console.log("Instance Response:", instanceResponse.data);
+    console.log("Instance Response:", instanceResponse.data);
 
   
-    // const postResponse = await axios.post(
-    //   "https://www.wixcustomsolutions.com/_functions-dev/contact",
-    //   instanceResponse.data, 
-    //   { headers: { "Content-Type": "application/json" } } 
-    // );
+    const postResponse = await axios.post(
+      "https://www.wixcustomsolutions.com/_functions-dev/contact",
+      instanceResponse.data, 
+      { headers: { "Content-Type": "application/json" } } 
+    );
 
-    // console.log("Post Response:", postResponse.data);
+    console.log("Post Response:", postResponse.data);
 
   } catch (error) {
     console.error(`Errors ${error}`);
