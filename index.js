@@ -168,7 +168,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   };
 
   try {
-    // Get the access token
     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
     const accessToken = response.data.access_token;
 
@@ -178,22 +177,21 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       "Authorization": `${accessToken}`,
     };
 
-    const instanceResponse = await axios.get(
-      "https://www.wixapis.com/apps/v1/instance",
-      { headers: instanceHeader }
-    );
+    // const instanceResponse = await axios.get(
+    //   "https://www.wixapis.com/apps/v1/instance",
+    //   { headers: instanceHeader }
+    // );
 
-    // Log instanceResponse data
-    console.log("Instance Response:", instanceResponse.data);
+    // console.log("Instance Response:", instanceResponse.data);
 
-    // Send instanceResponse.data to the specified endpoint
-    const postResponse = await axios.post(
-      "https://www.wixcustomsolutions.com/_functions-dev/contact",
-      instanceResponse.data, 
-      { headers: { "Content-Type": "application/json" } } 
-    );
+  
+    // const postResponse = await axios.post(
+    //   "https://www.wixcustomsolutions.com/_functions-dev/contact",
+    //   instanceResponse.data, 
+    //   { headers: { "Content-Type": "application/json" } } 
+    // );
 
-    console.log("Post Response:", postResponse.data);
+    // console.log("Post Response:", postResponse.data);
 
   } catch (error) {
     console.error(`Errors ${error}`);
