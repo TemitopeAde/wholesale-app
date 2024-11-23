@@ -185,13 +185,13 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     console.log("Instance Response:", instanceResponse.data);
 
   
-    const postResponse = await axios.post(
-      "https://www.wixcustomsolutions.com/_functions-dev/contact",
-      instanceResponse.data, 
-      { headers: { "Content-Type": "application/json" } } 
-    );
+    // const postResponse = await axios.post(
+    //   "https://www.wixcustomsolutions.com/_functions-dev/contact",
+    //   instanceResponse.data, 
+    //   { headers: { "Content-Type": "application/json" } } 
+    // );
 
-    console.log("Post Response:", postResponse.data);
+    // console.log("Post Response:", postResponse.data);
 
   } catch (error) {
     console.error(`Errors ${error}`);
