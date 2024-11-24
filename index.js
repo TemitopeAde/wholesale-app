@@ -200,55 +200,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
 
 
-
-// client.appInstances.onAppInstanceInstalled(async (event) => {
-//   const appId = event.data?.appId;
-//   const instanceId = event.metadata?.instanceId;
-//   const wixUserId = event.metadata.identity?.wixUserId;
-//   const memberId = event.metadata.identity?.memberId;
-//   const identityType = event.metadata.identity?.identityType;
-
-//   const payload = {
-//     grant_type: "client_credentials",
-//     client_id: appId,
-//     client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
-//     instance_id: instanceId,
-//   };
-
-//   const headers = {
-//     "Content-Type": "application/json",
-//   };
-
-//   try {
-//     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
-//     const accessToken = response.data.access_token; 
-
-//     const instanceHeader = {
-//       "Content-Type": "application/json",
-//       "Authorization": `${accessToken}`
-//     }
-
-//     const instanceResponse = await axios.get(
-//       "https://www.wixapis.com/apps/v1/instance",
-//       { headers: instanceHeader } 
-//     );
-//     console.log(instanceResponse.data);
-  
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
-
-// Allow all origins
-app.use(cors());
-
-// Enable response compression for better performance
-app.use(compression());
-
-// Middleware to parse text/plain, JSON, and URL-encoded bodies
+app.use(cors("*"));
 app.use(bodyParser.text()); // For parsing text/plain bodies
-app.use(bodyParser.json()); // For parsing application/json bodies
-app.use(bodyParser.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true })); 
 
 // Middleware to handle 'gzip' and 'deflate' encoded requests using pako
 app.use((req, res, next) => {
@@ -390,7 +344,6 @@ app.post("/webhook", express.text(), async (request, response) => {
   
   try {
     const res = await client.webhooks.process(request.body);
-    console.log(`response ${res}`);
   } catch (err) {
     console.log(err)
     response

@@ -159,4 +159,33 @@ https: //hooks.zapier.com/hooks/catch/9893714/3p16wgy/ --Paid Plan Purchased
   }
 }
 
-b 
+{
+  "instance": {
+    "instanceId": "298c606b-cd39-4fc0-9d4c-3b33ef0a4d0f",
+    "appName": "Request a Quote",
+    "appVersion": "^21.0.0",
+    "isFree": true,
+    "permissions": [],
+    "availablePlans": [],
+    "originInstanceId": "",
+    "isOriginSiteTemplate": false,
+    "copiedFromTemplate": false,
+    "freeTrialAvailable": true
+  },
+  "site": {
+    "siteDisplayName": "Dev Site 1x8866 1",
+    "locale": "en",
+    "paymentCurrency": "USD",
+    "multilingual": {
+      "isMultiLingual": false,
+      "supportedLanguages": []
+    },
+    "installedWixApps": [
+      "members_area",
+      "stores"
+    ],
+    "siteId": "69921076-dce5-48ee-a865-921fe5d85d5b"
+  }
+}
+
+https: //wholesale-app.vercel.app/webhook
