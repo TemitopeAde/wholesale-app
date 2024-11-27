@@ -82,3 +82,31 @@
 }
 
 
+instance: {
+  instanceId: 'b2cbed67-65b3-4f34-bfd2-ec4eecefc710',
+  appName: 'Request a Quote',
+  appVersion: '^23.0.0',
+  isFree: true,
+  permissions: [],
+  availablePlans: [],
+  originInstanceId: '',
+  isOriginSiteTemplate: false,
+  copiedFromTemplate: false,
+  freeTrialAvailable: true
+},
+site: {
+  siteDisplayName: 'My Site 6',
+  locale: 'es',
+  paymentCurrency: 'MXN',
+  multilingual: { isMultiLingual: false, supportedLanguages: [] },
+  url: 'https://borischang13.wixstudio.com/my-site-6',
+  installedWixApps: [ 'members_area', 'stores', 'wix_forms' ],
+  ownerEmail: 'boris.chang13@gmail.com',
+  ownerInfo: {
+    email: 'boris.chang13@gmail.com',
+    emailStatus: 'VERIFIED_OPT_IN'
+  },
+  siteId: 'cbfaf184-553d-4aa1-b634-d0d86c04ad2d'
+}
+
+

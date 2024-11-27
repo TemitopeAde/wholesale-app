@@ -64,7 +64,29 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
       "https://www.wixapis.com/apps/v1/instance",
       { headers: instanceHeader } 
     );
-    console.log(instanceResponse.data);
+    
+    
+    try {
+      const email = instanceResponse?.data?.site?.ownerEmail
+      const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to send email: ${response}`);
+      }
+  
+      const data = await response.json();
+      console.log("Email sent successfully:", data);
+    } catch (error) {
+      console.error("Error sending email:", error.message);
+    }
+  
   
   } catch (error) {
     console.log(error);
