@@ -32,7 +32,7 @@ const client = createClient({
 });
 
 
-client.appInstances.onAppInstanceRemoved(async (event) => {
+client.appInstances.onAppInstanceInstalled(async (event) => {
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
   const wixUserId = event.metadata.identity?.wixUserId
@@ -171,7 +171,7 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
   }
 })
 
-client.appInstances.onAppInstanceInstalled(async (event) => {
+client.appInstances.onAppInstanceRemoved(async (event) => {
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
   const wixUserId = event.metadata.identity?.wixUserId;
