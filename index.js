@@ -184,21 +184,10 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
     console.log("Instance Response:", instanceResponse.data);
 
-  
-    // const postResponse = await axios.post(
-    //   "https://www.wixcustomsolutions.com/_functions-dev/contact",
-    //   instanceResponse.data, 
-    //   { headers: { "Content-Type": "application/json" } } 
-    // );
-
-    // console.log("Post Response:", postResponse.data);
-
   } catch (error) {
     console.error(`Errors ${error}`);
   }
 });
-
-
 
 app.use(cors("*"));
 app.use(bodyParser.text()); // For parsing text/plain bodies
@@ -341,11 +330,10 @@ app.get('/api/part', async (req, res) => {
 });
 
 app.post("/webhook", express.text(), async (request, response) => {
-  
   try {
     const res = await client.webhooks.process(request.body);
   } catch (err) {
-    console.log(err)
+    console.log(err, "err")
     response
       .status(500)
       .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
