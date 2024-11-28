@@ -68,13 +68,16 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     
     try {
       const email = instanceResponse?.data?.site?.ownerEmail
+      const app = instanceResponse?.data?.instance?.appName
+      const site = instanceResponse?.data?.site?.url
+      const siteId = instanceResponse?.data?.site?.siteId
       const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, app, site, siteId }),
       });
   
       if (!response.ok) {
