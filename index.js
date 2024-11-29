@@ -96,6 +96,8 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 })
 
 client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
+  console.log(event);
+  
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
   const wixUserId = event.metadata.identity?.wixUserId
@@ -160,6 +162,8 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
 })
 
 client.appInstances.onAppInstancePaidPlanChanged(async (event) => {
+  console.log(event);
+  
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
   const wixUserId = event.metadata.identity?.wixUserId
@@ -224,6 +228,8 @@ client.appInstances.onAppInstancePaidPlanChanged(async (event) => {
 })
 
 client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
+  console.log(event);
+  
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
   const wixUserId = event.metadata.identity?.wixUserId
@@ -288,6 +294,8 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
 })
 
 client.appInstances.onAppInstanceRemoved(async (event) => {
+  console.log(event);
+  
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
   const wixUserId = event.metadata.identity?.wixUserId
@@ -301,6 +309,9 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
     client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
     instance_id: instanceId,
   };
+
+  console.log(payload);
+  
 
   const headers = {
     "Content-Type": "application/json",
