@@ -352,12 +352,10 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
 })
 
 
-
 app.use(cors("*"));
-app.use(bodyParser.text()); // For parsing text/plain bodies
+app.use(bodyParser.text()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-// Middleware to handle 'gzip' and 'deflate' encoded requests using pako
 app.use((req, res, next) => {
   const encoding = req.headers['content-encoding'];
   
@@ -496,6 +494,8 @@ app.get('/api/part', async (req, res) => {
 app.post("/webhook", express.text(), async (request, response) => {
   try {
     const res = await client.webhooks.process(request.body);
+    console.log(res);
+    
   } catch (err) {
     console.log(err, "err")
     response
