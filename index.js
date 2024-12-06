@@ -301,7 +301,7 @@ app.post("/webhook", express.text(), async (request, response) => {
 
 app.get("/document", async (req, res) => {
   const getData = async () => {
-    console.log(process.env.TOKEN);
+    
     
       try {
           const header = {
