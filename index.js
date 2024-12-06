@@ -22,6 +22,8 @@ const app = express();
 const port = 5000;
 const cors = require("cors");
 
+const token = "ya29.a0AeDClZDUTAkW98qdjdh9Vf-2Lne-DkJX0MCpdT0Vda_bozuoW-PuHbALqBKNOgM_uA5ib__d2ddAu-o6rAKAvMXgYlSuT6jAGHaT3Q4dQSf9MUU5DSZ7YxspB6KK_6Cnm-rOsUBGgnwYMhKk0Iw2U7QeVytfxSRRaeUaCgYKAdUSARASFQHGX2MiQLNdUVTzCVcQY2k9KGO14w0170"
+
 const client = createClient({
   auth: AppStrategy({
     appId: APP_ID,
@@ -303,9 +305,10 @@ app.get("/document", async (req, res) => {
   const getData = async () => {
   
       try {
-          const header = {
-              Authorization: `Bearer ya29.a0AeDClZBrJVkNUjY4CshMvIQEDVTPiW0qo2Qi6ORSiupGPcB_P-4pF9UhCWp_U4Lfp1Am0Uej5Q5QI4gvJ57PLcJreNJdtKZQbdV_2dZe-z6iszQpV_9rFLKtP4tHWalTLDbTm_VjfTR2380uCFV80Ia8I7qKYctbvDYaCgYKAR8SARASFQHGX2MiwZBNO-r0nwXs5pSLtoJB-A0170`,
-          }
+        const header = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+      };
 
           const requestOptions = {
               method: "GET",
@@ -346,6 +349,52 @@ app.get("/document", async (req, res) => {
       res.status(200).json(data); // Send the fetched data as JSON response
   } catch (error) {
       res.status(500).json({ error: "Failed to fetch data", details: error.message });
+  }
+});
+
+
+
+app.post("/append-data", async (req, res) => {
+  const dataObject = req.body; // Accepting the object from the request body
+
+  try {
+      // Map the object to a row
+      const row = [mapObjectToRow(dataObject)];
+
+      // API headers
+      const header = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+      };
+
+      // API request options
+      const requestOptions = {
+          method: "POST",
+          headers: header,
+          body: JSON.stringify({
+              range: "Sheet1",
+              majorDimension: "ROWS",
+              values: row, // Pass the mapped row here
+          }),
+      };
+
+      // API call to append data
+      const response = await fetch(
+          "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1:append?valueInputOption=USER_ENTERED",
+          requestOptions
+      );
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Data added successfully:", result);
+
+      res.status(200).json({ message: "Data added successfully", result });
+  } catch (error) {
+      console.error("Error adding data to sheet:", error.message);
+      res.status(500).json({ error: "Failed to append data", details: error.message });
   }
 });
 
