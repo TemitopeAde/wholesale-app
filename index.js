@@ -301,7 +301,7 @@ app.get("/document", async (req, res) => {
   const getData = async () => {
       try {
           const header = {
-              Authorization: "Bearer ya29.a0AeDClZDUMLRaDd4eYOlLrkZVSOtzASR-5KAHG1D_0ap4U2fw6oYgpZGBSIB2eXlDbsHCSBE57237rrDFItJop8yFFxM6Q1e2vkptyaf2NylEMuBpmVLzzfXSgCGHdn1kBUeGesX5aVbhLWkI4L4U7xwWvgmbmPExiVYaCgYKARQSARASFQHGX2MiDV3RQvVkpRZhBP-mdTPh5A0170",
+              Authorization: `Bearer ${process.env.TOKEN}`,
           };
 
           const requestOptions = {
