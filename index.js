@@ -33,6 +33,7 @@ const client = createClient({
 
 client.appInstances.onAppInstanceInstalled(async (event) => {
   console.log(event);
+  let status = {}
   
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
@@ -62,6 +63,23 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       "https://www.wixapis.com/apps/v1/instance",
       { headers: instanceHeader } 
     );
+
+    const isFree = instanceResponse?.data?.instance?.isFree;
+
+    if (isFree === false) {
+      status.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
+      status.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
+      status.active = true;
+      status.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
+    } else {
+      status.timeStamp = null
+      status.expirationDate = null;
+      status.active = false;
+      status.autoRenewing = false;
+    }
+
+    console.log(status);
+    
     
     try {
       const email = instanceResponse?.data?.site?.ownerEmail
@@ -69,12 +87,27 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       const site = instanceResponse?.data?.site?.url
       const siteId = instanceResponse?.data?.site?.siteId
       const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
+
+      const body = {
+        email, 
+        app, 
+        site, 
+        siteId,
+      };
+
+      if (isFree===false) {
+        body.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
+        body.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
+        body.active = true;
+        body.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
+      }
+
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, app, site, siteId }),
+        body: JSON.stringify(body),
       });
   
       if (!response.ok) {
@@ -261,6 +294,56 @@ app.post("/webhook", express.text(), async (request, response) => {
   }
 
   response.status(200).send();
+});
+
+
+app.get("/document", async (req, res) => {
+  const getData = async () => {
+      try {
+          const header = {
+              Authorization: "Bearer ya29.a0AeDClZDDIjWdTcuuuAg8bkQU1gHMvqJSqQv31Zv4Hr2N71_rRx6ZgDkXPHWql5C8YNenie6Bz5j56hdF_fuSX0PTqqmYu7HABHJoYcEpCw4KKJtppDMN8tTYI_vff2ht4RTBXm61Wt_j4l-D1xKjwTT8sJJkLR4ez2kaCgYKAUkSARASFQHGX2MiGzt-8b5cjutnr1x9UxxOVg0170",
+          };
+
+          const requestOptions = {
+              method: "GET",
+              headers: header,
+          };
+
+          const response = await fetch(
+              "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1",
+              requestOptions
+          );
+
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          // Transform the data into an array of objects
+          const rows = result.values;
+          if (!rows || rows.length < 2) {
+              throw new Error("Insufficient data in the sheet");
+          }
+
+          const headers = rows[0]; // First row as headers
+          const data = rows.slice(1).map((row) =>
+              Object.fromEntries(headers.map((key, index) => [key, row[index] || null]))
+          );
+
+          return data;
+      } catch (error) {
+          console.error("Error fetching data:", error.message);
+          throw error; // Re-throw the error for further handling
+      }
+  };
+
+  try {
+      const data = await getData();
+      res.status(200).json(data); // Send the fetched data as JSON response
+  } catch (error) {
+      res.status(500).json({ error: "Failed to fetch data", details: error.message });
+  }
 });
 
 
