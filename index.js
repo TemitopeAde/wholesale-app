@@ -36,6 +36,16 @@ const client = createClient({
   modules: { appInstances },
 });
 
+const mapObjectToRow = (data) => {
+  return [
+      data.agencyEmail || null,
+      data.agencyID || null,
+      data.numberOfInstance || null,
+      data.isComplete || null,
+      data.plan || null,
+      data.instanceUsed || null,
+  ];
+};
 
 client.appInstances.onAppInstanceInstalled(async (event) => {
   console.log(event);
@@ -301,9 +311,6 @@ app.post("/webhook", express.text(), async (request, response) => {
 
   response.status(200).send();
 });
-
-console.log(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
-
 
 const refreshAccessToken = async () => {
   try {
