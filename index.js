@@ -434,6 +434,72 @@ app.post("/append", async (req, res) => {
   }
 });
 
+app.get("/get-one", async (req, res) => {
+  console.log(req.query);
+  
+  const getData = async () => {
+    const tokens = await refreshAccessToken();
+    try {
+      const header = {
+        Authorization: `Bearer ${tokens}`,
+        "Content-Type": "application/json",
+      };
+
+      const requestOptions = {
+        method: "GET",
+        headers: header,
+      };
+
+      const response = await fetch(
+        "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1",
+        requestOptions
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      // Transform the data into an array of objects
+      const rows = result.values;
+      if (!rows || rows.length < 2) {
+        throw new Error("Insufficient data in the sheet");
+      }
+
+      const headers = rows[0]; // First row as headers
+      const data = rows.slice(1).map((row) =>
+        Object.fromEntries(headers.map((key, index) => [key, row[index] || null]))
+      );
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+      throw error; // Re-throw the error for further handling
+    }
+  };
+
+  const agencyEmail = req.query.agencyEmail; // Get the Agency Email from query parameters
+
+  if (!agencyEmail) {
+    return res.status(400).json({ error: "Agency Email is required" });
+  }
+
+  try {
+    const data = await getData();
+    const agencyData = data.find(item => item["Agency Email"] === agencyEmail);
+
+    if (!agencyData) {
+      return res.status(404).json({ error: "Agency not found" });
+    }
+
+    res.status(200).json(agencyData); // Return the data for the matching Agency Email
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch data", details: error.message });
+  }
+});
+
+
 
 app.post("/append-data", async (req, res) => {
   const dataObject = req.body; // Get data from the request body
