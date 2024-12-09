@@ -338,7 +338,6 @@ const refreshAccessToken = async () => {
   }
 };
 
-
 app.get("/document", async (req, res) => {
   const getData = async () => {
       const tokens = await refreshAccessToken();
@@ -393,30 +392,27 @@ app.get("/document", async (req, res) => {
 
 
 app.post("/append-data", async (req, res) => {
-  const dataObject = req.body; // Accepting the object from the request body
+  const dataObject = req.body; 
 
   try {
-      // Map the object to a row
       const row = [mapObjectToRow(dataObject)];
+      const tokens = await refreshAccessToken();
 
-      // API headers
       const header = {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokens}`,
           "Content-Type": "application/json",
       };
 
-      // API request options
       const requestOptions = {
           method: "POST",
           headers: header,
           body: JSON.stringify({
               range: "Sheet1",
               majorDimension: "ROWS",
-              values: row, // Pass the mapped row here
+              values: row, 
           }),
       };
 
-      // API call to append data
       const response = await fetch(
           "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1:append?valueInputOption=USER_ENTERED",
           requestOptions
@@ -428,7 +424,6 @@ app.post("/append-data", async (req, res) => {
 
       const result = await response.json();
       console.log("Data added successfully:", result);
-
       res.status(200).json({ message: "Data added successfully", result });
   } catch (error) {
       console.error("Error adding data to sheet:", error.message);
