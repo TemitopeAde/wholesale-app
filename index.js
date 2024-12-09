@@ -403,6 +403,8 @@ app.post("/append-data", async (req, res) => {
 
   try {
       const row = [mapObjectToRow(dataObject)];
+      console.log(row);
+      
       const tokens = await refreshAccessToken();
 
       const header = {
