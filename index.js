@@ -302,7 +302,7 @@ app.post("/webhook", express.text(), async (request, response) => {
   response.status(200).send();
 });
 
-console.log(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN);
+console.log(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
 
 
 const refreshAccessToken = async () => {
