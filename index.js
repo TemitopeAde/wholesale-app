@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const pako = require("pako");
@@ -5,7 +7,9 @@ const axios = require('axios');
 const { AppStrategy, createClient } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
 
-
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgDiCeyVSupN1GmiIfEvZ
@@ -298,15 +302,46 @@ app.post("/webhook", express.text(), async (request, response) => {
   response.status(200).send();
 });
 
+const refreshAccessToken = async () => {
+  try {
+      const response = await fetch("https://oauth2.googleapis.com/token", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+              client_id: CLIENT_ID,
+              client_secret: CLIENT_SECRET,
+              refresh_token: REFRESH_TOKEN,
+              grant_type: "refresh_token",
+          }),
+      });
 
+      if (!response.ok) {
+          throw new Error(`Failed to refresh token: ${response.statusText}`);
+      }
+
+      const tokenData = await response.json();
+      console.log("New access token:", tokenData.access_token);
+
+      // Optionally, log the expiry time
+      const expiresInMs = tokenData.expires_in * 1000; // Convert seconds to milliseconds
+      console.log("Access token expires in:", expiresInMs / 1000, "seconds");
+
+      return tokenData.access_token;
+  } catch (error) {
+      console.error("Error refreshing access token:", error.message);
+      throw error;
+  }
+};
 
 
 app.get("/document", async (req, res) => {
   const getData = async () => {
-  
+      const tokens = await refreshAccessToken();
       try {
         const header = {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokens}`,
           "Content-Type": "application/json",
       };
 
