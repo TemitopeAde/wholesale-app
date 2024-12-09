@@ -149,7 +149,7 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
 })
 
 
-app.use(cors("*"));
+app.use(cors("*"))
 app.use(bodyParser.text()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
 
