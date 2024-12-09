@@ -38,12 +38,12 @@ const client = createClient({
 
 const mapObjectToRow = (data) => {
   return [
-      data.agencyEmail || null,
-      data.agencyID || null,
-      data.numberOfInstance || null,
-      data.isComplete || null,
-      data.plan || null,
-      data.instanceUsed || null,
+    data["Agency Email"] || data.agencyEmail || null,
+    data["Agency ID"] || data.agencyID || null,
+    data["Number of instance"] || data.numberOfInstance || null,
+    data["isComplete"] || null,
+    data["Plan"] || data.plan || null,
+    data["Instance used"] || data.instanceUsed || null,
   ];
 };
 
@@ -162,6 +162,9 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
 app.use(cors("*"))
 app.use(bodyParser.text()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
+
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.use((req, res, next) => {
   const encoding = req.headers['content-encoding'];
@@ -332,11 +335,8 @@ const refreshAccessToken = async () => {
       }
 
       const tokenData = await response.json();
-      console.log("New access token:", tokenData.access_token);
-
-      // Optionally, log the expiry time
       const expiresInMs = tokenData.expires_in * 1000; // Convert seconds to milliseconds
-      console.log("Access token expires in:", expiresInMs / 1000, "seconds");
+     
 
       return tokenData.access_token;
   } catch (error) {
@@ -396,15 +396,10 @@ app.get("/document", async (req, res) => {
   }
 });
 
-
-
 app.post("/append-data", async (req, res) => {
   const dataObject = req.body; 
-
   try {
       const row = [mapObjectToRow(dataObject)];
-      console.log(row);
-      
       const tokens = await refreshAccessToken();
 
       const header = {
@@ -432,7 +427,6 @@ app.post("/append-data", async (req, res) => {
       }
 
       const result = await response.json();
-      console.log("Data added successfully:", result);
       res.status(200).json({ message: "Data added successfully", result });
   } catch (error) {
       console.error("Error adding data to sheet:", error.message);
