@@ -330,7 +330,7 @@ const refreshAccessToken = async () => {
 
       return tokenData.access_token;
   } catch (error) {
-      console.error("Error refreshing access token:", error.message);
+      console.error("Error refreshing access token:", error);
       throw error;
   }
 };
