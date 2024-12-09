@@ -435,7 +435,6 @@ app.post("/append", async (req, res) => {
 });
 
 app.get("/get-one", async (req, res) => {
-  console.log(req.query);
   
   const getData = async () => {
     const tokens = await refreshAccessToken();
@@ -500,11 +499,10 @@ app.get("/get-one", async (req, res) => {
 });
 
 
-
 app.post("/append-data", async (req, res) => {
   const dataObject = req.body; // Get data from the request body
-  const agencyId = dataObject.agencyId; // Assuming `agencyId` is part of the incoming data
-  
+  const agencyId = dataObject["Agency ID"]; // Assuming `Agency ID` is part of the incoming data
+
   try {
     // Step 1: Get the existing rows from the Google Sheet
     const tokens = await refreshAccessToken();
@@ -531,12 +529,13 @@ app.post("/append-data", async (req, res) => {
 
     // Step 3: Prepare the data to be written
     const row = mapObjectToRow(dataObject); // This function converts the dataObject to an array of row values
-    
+
     if (rowIndex !== -1) {
-      // Step 4: If Agency ID exists, update the existing row
-      const updatedRow = rows[rowIndex];
-      updatedRow[6] = row[6]; // Assuming Instance used is in column G
-      updatedRow[3] = row[3]; // Assuming isComplete is in column D
+      // Step 4: If Agency ID exists, update the entire row
+      const updatedRow = row; // Replace the entire row with the new data
+
+      // console.log(updatedRow);
+      
 
       // Send the updated row to Google Sheets API
       const updateResponse = await fetch(
@@ -584,6 +583,92 @@ app.post("/append-data", async (req, res) => {
     res.status(500).json({ error: "Failed to process data", details: error.message });
   }
 });
+
+
+
+// app.post("/append-data", async (req, res) => {
+//   const dataObject = req.body; // Get data from the request body
+//   const agencyId = dataObject["Agency ID"]
+  
+//   try {
+//     // Step 1: Get the existing rows from the Google Sheet
+//     const tokens = await refreshAccessToken();
+//     const header = {
+//       Authorization: `Bearer ${tokens}`,
+//       "Content-Type": "application/json",
+//     };
+
+//     const response = await fetch(
+//       "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1!A:G", // Fetch data range
+//       { method: "GET", headers: header }
+//     );
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
+
+//     const sheetData = await response.json();
+//     const rows = sheetData.values || [];
+//     const headerRow = rows.shift(); // Remove header row
+
+//     // Step 2: Search for the Agency ID in the existing rows
+//     const rowIndex = rows.findIndex(row => row[1] == agencyId); // Assuming `Agency ID` is in column B
+
+//     // Step 3: Prepare the data to be written
+//     const row = mapObjectToRow(dataObject); // This function converts the dataObject to an array of row values
+    
+//     if (rowIndex !== -1) {
+//       // Step 4: If Agency ID exists, update the existing row
+//       const updatedRow = rows[rowIndex];
+//       updatedRow[6] = row[6]; // Assuming Instance used is in column G
+//       updatedRow[3] = row[3]; // Assuming isComplete is in column D
+
+//       // Send the updated row to Google Sheets API
+//       const updateResponse = await fetch(
+//         `https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1!A${rowIndex + 2}:G${rowIndex + 2}?valueInputOption=USER_ENTERED`,
+//         {
+//           method: "PUT",
+//           headers: header,
+//           body: JSON.stringify({
+//             range: `Sheet1!A${rowIndex + 2}:G${rowIndex + 2}`, // Target the row to update
+//             values: [updatedRow],
+//           }),
+//         }
+//       );
+
+//       if (!updateResponse.ok) {
+//         throw new Error(`HTTP error! Status: ${updateResponse.status}`);
+//       }
+
+//       const result = await updateResponse.json();
+//       res.status(200).json({ message: "Data updated successfully", result });
+//     } else {
+//       // Step 5: If Agency ID doesn't exist, append a new row
+//       const appendResponse = await fetch(
+//         "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1:append?valueInputOption=USER_ENTERED",
+//         {
+//           method: "POST",
+//           headers: header,
+//           body: JSON.stringify({
+//             range: "Sheet1",
+//             majorDimension: "ROWS",
+//             values: [row],
+//           }),
+//         }
+//       );
+
+//       if (!appendResponse.ok) {
+//         throw new Error(`HTTP error! Status: ${appendResponse.status}`);
+//       }
+
+//       const appendResult = await appendResponse.json();
+//       res.status(200).json({ message: "Data added successfully", appendResult });
+//     }
+//   } catch (error) {
+//     console.error("Error processing data:", error.message);
+//     res.status(500).json({ error: "Failed to process data", details: error.message });
+//   }
+// });
 
 
 
