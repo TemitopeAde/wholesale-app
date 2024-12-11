@@ -44,6 +44,7 @@ const mapObjectToRow = (data) => {
     data["isComplete"] || null,
     data["Plan"] || data.plan || null,
     data["Instance used"] || data.instanceUsed || null,
+    data["Active"] || "FALSE", 
   ];
 };
 
@@ -512,7 +513,7 @@ app.post("/append-data", async (req, res) => {
     };
 
     const response = await fetch(
-      "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1!A:G", // Fetch data range
+      "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1!A:H", 
       { method: "GET", headers: header }
     );
 
