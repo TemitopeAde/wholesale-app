@@ -583,7 +583,7 @@ app.post("/append-data", async (req, res) => {
 
 app.post('/payments', express.raw({type: 'application/json'}), (request, response) => {
   console.log(request);
-  
+  const endpointSecret = process.env.WEBHOOK_SECRET
   let event = request.body;
   // Only verify the event if you have an endpoint secret defined.
   // Otherwise use the basic event deserialized with JSON.parse
