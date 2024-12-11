@@ -581,27 +581,19 @@ app.post("/append-data", async (req, res) => {
 });
 
 
-app.post('/payments', express.raw({type: 'application/json'}), (request, response) => {
-  // console.log(request);
-  const endpointSecret = process.env.WEBHOOK_SECRET
-  let event = request.body;
-  
-  if (endpointSecret) {
-    // Get the signature sent by Stripe
-    const signature = request.headers['stripe-signature'];
-    console.log(request.body);
-    console.log(signature);
-    console.log(endpointSecret)
-    try {
-      event = stripe.webhooks.constructEvent(
-        request.body,
-        signature,
-        endpointSecret
-      );
-    } catch (err) {
-      console.log(`⚠️  Webhook signature verification failed.`, err.message);
-      return response.sendStatus(400);
-    }
+
+app.post('/payments', express.raw({ type: 'application/json' }), (request, response) => {
+  const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
+  const payload = request.body;  // The raw body sent by Stripe
+
+  let event;
+
+  try {
+    // Verify the webhook signature
+    event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+  } catch (err) {
+    console.log(`⚠️ Webhook signature verification failed.`, err.message);
+    return response.status(400).send(`Webhook signature verification failed.`);
   }
 
   // Handle the event
@@ -609,22 +601,68 @@ app.post('/payments', express.raw({type: 'application/json'}), (request, respons
     case 'payment_intent.succeeded':
       const paymentIntent = event.data.object;
       console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-      // Then define and call a method to handle the successful payment intent.
-      // handlePaymentIntentSucceeded(paymentIntent);
+      // You can handle the successful payment here
       break;
     case 'payment_method.attached':
       const paymentMethod = event.data.object;
-      // Then define and call a method to handle the successful attachment of a PaymentMethod.
-      // handlePaymentMethodAttached(paymentMethod);
+      console.log(`PaymentMethod ${paymentMethod.id} was attached!`);
+      // Handle payment method attachment
       break;
     default:
       // Unexpected event type
       console.log(`Unhandled event type ${event.type}.`);
   }
 
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
+  // Acknowledge receipt of the event
+  response.status(200).send('Event received');
 });
+
+
+
+// app.post('/payments', express.raw({type: 'application/json'}), (request, response) => {
+//   // console.log(request);
+//   const endpointSecret = process.env.WEBHOOK_SECRET
+//   let event = request.body;
+  
+//   if (endpointSecret) {
+//     // Get the signature sent by Stripe
+//     const signature = request.headers['stripe-signature'];
+//     console.log(request.body);
+//     console.log(signature);
+//     console.log(endpointSecret)
+//     try {
+//       event = stripe.webhooks.constructEvent(
+//         request.body,
+//         signature,
+//         endpointSecret
+//       );
+//     } catch (err) {
+//       console.log(`⚠️  Webhook signature verification failed.`, err.message);
+//       return response.sendStatus(400);
+//     }
+//   }
+
+//   // Handle the event
+//   switch (event.type) {
+//     case 'payment_intent.succeeded':
+//       const paymentIntent = event.data.object;
+//       console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+//       // Then define and call a method to handle the successful payment intent.
+//       // handlePaymentIntentSucceeded(paymentIntent);
+//       break;
+//     case 'payment_method.attached':
+//       const paymentMethod = event.data.object;
+//       // Then define and call a method to handle the successful attachment of a PaymentMethod.
+//       // handlePaymentMethodAttached(paymentMethod);
+//       break;
+//     default:
+//       // Unexpected event type
+//       console.log(`Unhandled event type ${event.type}.`);
+//   }
+
+//   // Return a 200 response to acknowledge receipt of the event
+//   response.send();
+// });
 
 
 
