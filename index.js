@@ -6,6 +6,7 @@ const pako = require("pako");
 const axios = require('axios');
 const { AppStrategy, createClient } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
+const stripe = require('stripe')(`${process.env.STRIPE_KEY}`);
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -580,94 +581,55 @@ app.post("/append-data", async (req, res) => {
 });
 
 
-// app.post("/append-data", async (req, res) => {
-//   const dataObject = req.body; // Get data from the request body
-//   const agencyId = dataObject["Agency ID"]
+app.post('/payments', express.raw({type: 'application/json'}), (request, response) => {
+  console.log(request);
   
-//   try {
-//     // Step 1: Get the existing rows from the Google Sheet
-//     const tokens = await refreshAccessToken();
-//     const header = {
-//       Authorization: `Bearer ${tokens}`,
-//       "Content-Type": "application/json",
-//     };
+  let event = request.body;
+  // Only verify the event if you have an endpoint secret defined.
+  // Otherwise use the basic event deserialized with JSON.parse
+  if (endpointSecret) {
+    // Get the signature sent by Stripe
+    const signature = request.headers['stripe-signature'];
+    try {
+      event = stripe.webhooks.constructEvent(
+        request.body,
+        signature,
+        endpointSecret
+      );
+    } catch (err) {
+      console.log(`⚠️  Webhook signature verification failed.`, err.message);
+      return response.sendStatus(400);
+    }
+  }
 
-//     const response = await fetch(
-//       "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1!A:G", // Fetch data range
-//       { method: "GET", headers: header }
-//     );
+  // Handle the event
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      const paymentIntent = event.data.object;
+      console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+      // Then define and call a method to handle the successful payment intent.
+      // handlePaymentIntentSucceeded(paymentIntent);
+      break;
+    case 'payment_method.attached':
+      const paymentMethod = event.data.object;
+      // Then define and call a method to handle the successful attachment of a PaymentMethod.
+      // handlePaymentMethodAttached(paymentMethod);
+      break;
+    default:
+      // Unexpected event type
+      console.log(`Unhandled event type ${event.type}.`);
+  }
 
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
-
-//     const sheetData = await response.json();
-//     const rows = sheetData.values || [];
-//     const headerRow = rows.shift(); // Remove header row
-
-//     // Step 2: Search for the Agency ID in the existing rows
-//     const rowIndex = rows.findIndex(row => row[1] == agencyId); // Assuming `Agency ID` is in column B
-
-//     // Step 3: Prepare the data to be written
-//     const row = mapObjectToRow(dataObject); // This function converts the dataObject to an array of row values
-    
-//     if (rowIndex !== -1) {
-//       // Step 4: If Agency ID exists, update the existing row
-//       const updatedRow = rows[rowIndex];
-//       updatedRow[6] = row[6]; // Assuming Instance used is in column G
-//       updatedRow[3] = row[3]; // Assuming isComplete is in column D
-
-//       // Send the updated row to Google Sheets API
-//       const updateResponse = await fetch(
-//         `https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1!A${rowIndex + 2}:G${rowIndex + 2}?valueInputOption=USER_ENTERED`,
-//         {
-//           method: "PUT",
-//           headers: header,
-//           body: JSON.stringify({
-//             range: `Sheet1!A${rowIndex + 2}:G${rowIndex + 2}`, // Target the row to update
-//             values: [updatedRow],
-//           }),
-//         }
-//       );
-
-//       if (!updateResponse.ok) {
-//         throw new Error(`HTTP error! Status: ${updateResponse.status}`);
-//       }
-
-//       const result = await updateResponse.json();
-//       res.status(200).json({ message: "Data updated successfully", result });
-//     } else {
-//       // Step 5: If Agency ID doesn't exist, append a new row
-//       const appendResponse = await fetch(
-//         "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1:append?valueInputOption=USER_ENTERED",
-//         {
-//           method: "POST",
-//           headers: header,
-//           body: JSON.stringify({
-//             range: "Sheet1",
-//             majorDimension: "ROWS",
-//             values: [row],
-//           }),
-//         }
-//       );
-
-//       if (!appendResponse.ok) {
-//         throw new Error(`HTTP error! Status: ${appendResponse.status}`);
-//       }
-
-//       const appendResult = await appendResponse.json();
-//       res.status(200).json({ message: "Data added successfully", appendResult });
-//     }
-//   } catch (error) {
-//     console.error("Error processing data:", error.message);
-//     res.status(500).json({ error: "Failed to process data", details: error.message });
-//   }
-// });
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
+});
 
 
 
 
-// Start the server
+
+
+
 app.listen(port, () => {
   console.log(`Custom route server listening at http://localhost:${port}`);
 });
