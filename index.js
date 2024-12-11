@@ -27,7 +27,7 @@ const app = express();
 const port = 5000;
 const cors = require("cors");
 
-const token = "ya29.a0AeDClZDUTAkW98qdjdh9Vf-2Lne-DkJX0MCpdT0Vda_bozuoW-PuHbALqBKNOgM_uA5ib__d2ddAu-o6rAKAvMXgYlSuT6jAGHaT3Q4dQSf9MUU5DSZ7YxspB6KK_6Cnm-rOsUBGgnwYMhKk0Iw2U7QeVytfxSRRaeUaCgYKAdUSARASFQHGX2MiQLNdUVTzCVcQY2k9KGO14w0170"
+// const token = "ya29.a0AeDClZDUTAkW98qdjdh9Vf-2Lne-DkJX0MCpdT0Vda_bozuoW-PuHbALqBKNOgM_uA5ib__d2ddAu-o6rAKAvMXgYlSuT6jAGHaT3Q4dQSf9MUU5DSZ7YxspB6KK_6Cnm-rOsUBGgnwYMhKk0Iw2U7QeVytfxSRRaeUaCgYKAdUSARASFQHGX2MiQLNdUVTzCVcQY2k9KGO14w0170"
 
 const client = createClient({
   auth: AppStrategy({
@@ -169,7 +169,7 @@ app.post('/payments', express.raw({ type: 'application/json' }), (request, respo
   try {
     // Verify the webhook signature
     event = stripe.webhooks.constructEvent(payload, sig, process.env.WEBHOOK_SECRET);
-    console.log(`event ${event}`)
+    console.log(`event ${event.data.object.billing_details}`)
     
   } catch (err) {
     console.log(`⚠️ Webhook signature verification failed.`, err.message);
