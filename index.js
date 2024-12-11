@@ -500,11 +500,11 @@ app.get("/get-one", async (req, res) => {
 
 
 app.post("/append-data", async (req, res) => {
-  const dataObject = req.body; // Get data from the request body
-  const agencyId = dataObject["Agency ID"]; // Assuming `Agency ID` is part of the incoming data
+  const dataObject = req.body; 
+  const agencyId = dataObject["Agency ID"];
 
   try {
-    // Step 1: Get the existing rows from the Google Sheet
+    
     const tokens = await refreshAccessToken();
     const header = {
       Authorization: `Bearer ${tokens}`,
@@ -522,22 +522,15 @@ app.post("/append-data", async (req, res) => {
 
     const sheetData = await response.json();
     const rows = sheetData.values || [];
-    const headerRow = rows.shift(); // Remove header row
+    const headerRow = rows.shift(); 
 
-    // Step 2: Search for the Agency ID in the existing rows
-    const rowIndex = rows.findIndex(row => row[1] == agencyId); // Assuming `Agency ID` is in column B
+    const rowIndex = rows.findIndex(row => row[1] == agencyId); 
 
-    // Step 3: Prepare the data to be written
-    const row = mapObjectToRow(dataObject); // This function converts the dataObject to an array of row values
+    const row = mapObjectToRow(dataObject); 
 
     if (rowIndex !== -1) {
-      // Step 4: If Agency ID exists, update the entire row
-      const updatedRow = row; // Replace the entire row with the new data
+      const updatedRow = row; 
 
-      // console.log(updatedRow);
-      
-
-      // Send the updated row to Google Sheets API
       const updateResponse = await fetch(
         `https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1!A${rowIndex + 2}:G${rowIndex + 2}?valueInputOption=USER_ENTERED`,
         {
@@ -557,7 +550,6 @@ app.post("/append-data", async (req, res) => {
       const result = await updateResponse.json();
       res.status(200).json({ message: "Data updated successfully", result });
     } else {
-      // Step 5: If Agency ID doesn't exist, append a new row
       console.log(rows);
       
       const appendResponse = await fetch(
@@ -585,7 +577,6 @@ app.post("/append-data", async (req, res) => {
     res.status(500).json({ error: "Failed to process data", details: error.message });
   }
 });
-
 
 
 // app.post("/append-data", async (req, res) => {
