@@ -6,7 +6,7 @@ const pako = require("pako");
 const axios = require('axios');
 const { AppStrategy, createClient } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
-const stripe = require('stripe')(`${process.env.STRIPE_KEY}`);
+const stripe = require('stripe')(`${process.env.STRIPE_KEY}`)
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
