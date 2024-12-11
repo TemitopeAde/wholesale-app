@@ -169,7 +169,7 @@ app.post('/payments', express.raw({ type: 'application/json' }), (request, respo
   try {
     // Verify the webhook signature
     event = stripe.webhooks.constructEvent(payload, sig, process.env.WEBHOOK_SECRET);
-    console.log(`event ${event.data.object.billing_details}`)
+    console.log(`event ${event.data.object.billing_details?.email}`)
     
   } catch (err) {
     console.log(`⚠️ Webhook signature verification failed.`, err.message);
@@ -179,22 +179,22 @@ app.post('/payments', express.raw({ type: 'application/json' }), (request, respo
   // Handle the event
   switch (event.type) {
     case 'payment_intent.succeeded':
-      console.log(event);
+      console.log(event.data.object.billing_details?.email);
       
       const paymentIntent = event.data.object;
       console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
       // You can handle the successful payment here
       break;
     case 'payment_method.attached':
-      console.log(event);
+      console.log(event.data.object.billing_details?.email);
       const paymentMethod = event.data.object;
       console.log(`PaymentMethod ${paymentMethod.id} was attached!`);
       // Handle payment method attachment
       break;
     default:
-      console.log(event);
+      console.log(event.data.object.billing_details?.email);
+      console.log(event.data.object.billing_details);
       // Unexpected event type
-      console.log(`Unhandled event type ${event.type}.`);
   }
 
   // Acknowledge receipt of the event
