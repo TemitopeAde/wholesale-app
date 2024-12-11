@@ -591,8 +591,7 @@ app.post('/payments', express.raw({type: 'application/json'}), (request, respons
     const signature = request.headers['stripe-signature'];
     console.log(request.body);
     console.log(signature);
-    console.log(endpointSecret);
-    
+    console.log(endpointSecret)
     try {
       event = stripe.webhooks.constructEvent(
         request.body,
