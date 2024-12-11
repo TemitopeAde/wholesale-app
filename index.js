@@ -558,6 +558,8 @@ app.post("/append-data", async (req, res) => {
       res.status(200).json({ message: "Data updated successfully", result });
     } else {
       // Step 5: If Agency ID doesn't exist, append a new row
+      console.log(rows);
+      
       const appendResponse = await fetch(
         "https://sheets.googleapis.com/v4/spreadsheets/1700LFfflTJLJew4jDRO76T031DJVFe-gQ8UZsAPFXXc/values/Sheet1:append?valueInputOption=USER_ENTERED",
         {
