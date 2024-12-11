@@ -161,6 +161,42 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
 })
 
 
+app.post('/payments', express.raw({ type: 'application/json' }), (request, response) => {
+  const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
+  const payload = request.body;  // The raw body sent by Stripe
+
+  let event;
+
+  try {
+    // Verify the webhook signature
+    event = stripe.webhooks.constructEvent(payload, sig, process.env.WEBHOOK_SECRET);
+  } catch (err) {
+    console.log(`⚠️ Webhook signature verification failed.`, err.message);
+    return response.status(400).send(`Webhook signature verification failed.`);
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      const paymentIntent = event.data.object;
+      console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+      // You can handle the successful payment here
+      break;
+    case 'payment_method.attached':
+      const paymentMethod = event.data.object;
+      console.log(`PaymentMethod ${paymentMethod.id} was attached!`);
+      // Handle payment method attachment
+      break;
+    default:
+      // Unexpected event type
+      console.log(`Unhandled event type ${event.type}.`);
+  }
+
+  // Acknowledge receipt of the event
+  response.status(200).send('Event received');
+});
+
+
 app.use(cors("*"))
 app.use(bodyParser.text()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
@@ -582,40 +618,6 @@ app.post("/append-data", async (req, res) => {
 
 
 
-app.post('/payments', express.raw({ type: 'application/json' }), (request, response) => {
-  const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
-  const payload = request.body;  // The raw body sent by Stripe
-
-  let event;
-
-  try {
-    // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(payload, sig, process.env.WEBHOOK_SECRET);
-  } catch (err) {
-    console.log(`⚠️ Webhook signature verification failed.`, err.message);
-    return response.status(400).send(`Webhook signature verification failed.`);
-  }
-
-  // Handle the event
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      const paymentIntent = event.data.object;
-      console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-      // You can handle the successful payment here
-      break;
-    case 'payment_method.attached':
-      const paymentMethod = event.data.object;
-      console.log(`PaymentMethod ${paymentMethod.id} was attached!`);
-      // Handle payment method attachment
-      break;
-    default:
-      // Unexpected event type
-      console.log(`Unhandled event type ${event.type}.`);
-  }
-
-  // Acknowledge receipt of the event
-  response.status(200).send('Event received');
-});
 
 
 
