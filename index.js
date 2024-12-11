@@ -582,14 +582,17 @@ app.post("/append-data", async (req, res) => {
 
 
 app.post('/payments', express.raw({type: 'application/json'}), (request, response) => {
-  console.log(request);
+  // console.log(request);
   const endpointSecret = process.env.WEBHOOK_SECRET
   let event = request.body;
-  // Only verify the event if you have an endpoint secret defined.
-  // Otherwise use the basic event deserialized with JSON.parse
+  
   if (endpointSecret) {
     // Get the signature sent by Stripe
     const signature = request.headers['stripe-signature'];
+    console.log(request.body);
+    console.log(signature);
+    console.log(endpointSecret);
+    
     try {
       event = stripe.webhooks.constructEvent(
         request.body,
