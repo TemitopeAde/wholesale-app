@@ -169,6 +169,8 @@ app.post('/payments', express.raw({ type: 'application/json' }), (request, respo
   try {
     // Verify the webhook signature
     event = stripe.webhooks.constructEvent(payload, sig, process.env.WEBHOOK_SECRET);
+    console.log(`event ${event}`)
+    
   } catch (err) {
     console.log(`⚠️ Webhook signature verification failed.`, err.message);
     return response.status(400).send(`Webhook signature verification failed.`);
