@@ -160,7 +160,6 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
   console.log(event, event);  
 })
 
-
 app.post('/payments', express.raw({ type: 'application/json' }), (request, response) => {
   const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
   const payload = request.body;  // The raw body sent by Stripe
@@ -178,16 +177,20 @@ app.post('/payments', express.raw({ type: 'application/json' }), (request, respo
   // Handle the event
   switch (event.type) {
     case 'payment_intent.succeeded':
+      console.log(event);
+      
       const paymentIntent = event.data.object;
       console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
       // You can handle the successful payment here
       break;
     case 'payment_method.attached':
+      console.log(event);
       const paymentMethod = event.data.object;
       console.log(`PaymentMethod ${paymentMethod.id} was attached!`);
       // Handle payment method attachment
       break;
     default:
+      console.log(event);
       // Unexpected event type
       console.log(`Unhandled event type ${event.type}.`);
   }
