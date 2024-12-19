@@ -282,10 +282,13 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
 
     default:
       console.log(event.type);
-      const res = await makeAuthorizedRequest()
+      const res = await makeAuthorizedRequest();
+
+      console.log(res);
       
-      console.log(event.data.object);
-      console.log(event.data.object);
+      
+      // console.log(event.data.object);
+      // console.log(event.data.object);
       // Unexpected event type
   }
   // console.log(event.data.object.billing_details?.email);
