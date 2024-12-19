@@ -27,7 +27,6 @@ const app = express();
 const port = 5000;
 const cors = require("cors");
 
-const fetch = require('node-fetch');
 
 async function fetchToken() {
   const url = 'https://iccom.convadis.ch/api/v1/oauth2/token?grant_type=client_credentials';
