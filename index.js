@@ -27,7 +27,109 @@ const app = express();
 const port = 5000;
 const cors = require("cors");
 
-// const token = "ya29.a0AeDClZDUTAkW98qdjdh9Vf-2Lne-DkJX0MCpdT0Vda_bozuoW-PuHbALqBKNOgM_uA5ib__d2ddAu-o6rAKAvMXgYlSuT6jAGHaT3Q4dQSf9MUU5DSZ7YxspB6KK_6Cnm-rOsUBGgnwYMhKk0Iw2U7QeVytfxSRRaeUaCgYKAdUSARASFQHGX2MiQLNdUVTzCVcQY2k9KGO14w0170"
+const fetch = require('node-fetch');
+
+async function fetchToken() {
+  const url = 'https://iccom.convadis.ch/api/v1/oauth2/token?grant_type=client_credentials';
+  const username = 'RuV6xLGoyJUN83U3pFOX';
+  const password = 'rckcCyKqp6F66o70aKPM';
+
+  const auth = Buffer.from(`${username}:${password}`).toString('base64');
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    
+    return data.access_token; // Return the token
+  } catch (error) {
+    console.error('Error fetching token:', error.message);
+    throw error;
+  }
+}
+
+function generateRandomHexId(length) {
+  const characters = '0123456789ABCDEF';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+function generateRandomPin(length) {
+  const characters = '0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return parseInt(result, 10);
+}
+
+function generateRandomReservationId(min = 1000, max = 4294967295) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+async function makeAuthorizedRequest() {
+  try {
+    const token = await fetchToken(); 
+    const reservationId = generateRandomReservationId();
+
+    const url = `https://iccom.convadis.ch/api/v1/organizations/8043/reservations/${reservationId}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const generatedId = generateRandomHexId(32); 
+    const generatedPin = generateRandomPin(6); 
+
+    const body = JSON.stringify({
+      vehicleId: 1,
+      requestForUnauthorizedUser: false,
+      rights: 'ACCESS_DRIVE',
+      language: 'GERMAN',
+      authorizedUsers: [
+        {
+          identityDevice: 'CAPP',
+          userIdHex: generatedId,
+          pin: generatedPin,
+        },
+      ],
+      showCardPin: true,
+      permanent: false,
+    });
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers,
+      body,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Response:', result);
+    return result
+    
+  } catch (error) {
+    console.error('Error making authorized request:', error.message);
+  }
+}
+
 
 const client = createClient({
   auth: AppStrategy({
@@ -160,7 +262,7 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
   console.log(event, event);  
 })
 
-app.post('/payments', express.raw({ type: 'application/json' }), (request, response) => {
+app.post('/payments', express.raw({ type: 'application/json' }), async (request, response) => {
   const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
   const payload = request.body;  // The raw body sent by Stripe
 
@@ -181,6 +283,7 @@ app.post('/payments', express.raw({ type: 'application/json' }), (request, respo
 
     default:
       console.log(event.type);
+      const res = await makeAuthorizedRequest()
       
       console.log(event.data.object);
       console.log(event.data.object);
