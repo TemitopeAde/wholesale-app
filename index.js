@@ -178,7 +178,10 @@ app.post('/payments', express.raw({ type: 'application/json' }), (request, respo
 
   // Handle the event
   switch (event.type) {
+
     default:
+      console.log(event.type);
+      
       console.log(event.data.object);
       console.log(event.data.object);
       // Unexpected event type
