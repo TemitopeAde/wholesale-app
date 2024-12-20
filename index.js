@@ -329,61 +329,51 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
     return response.status(400).send(`Webhook signature verification failed.`);
   }
 
-  // Handle the event
-  switch (event.type) {
 
-    default:
-      console.log(event.type);
-      const res = await makeAuthorizedRequest();
+  if (event.type ==="charge.succeeded") {
+    const res = await makeAuthorizedRequest();
 
-      try {
-        const body = JSON.stringify({
-          profiles: [
-            {
-              organizationId: '8043',
-              userIdHex: res?.authorizedUsers[0].userIdHex,
-              pin: res?.authorizedUsers[0].pin
-            },
-          ]
-        });
-        const tokens = await fetchToken(); 
+    try {
+      const body = JSON.stringify({
+        profiles: [
+          {
+            organizationId: '8043',
+            userIdHex: res?.authorizedUsers[0].userIdHex,
+            pin: res?.authorizedUsers[0].pin
+          },
+        ]
+      });
+      const tokens = await fetchToken(); 
 
-        const VaultHeaders = {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokens}`,
-        };
-    
-        const response = await fetch("https://iccom.convadis.ch/api/v1/capp-profiles-vaults", {
-          method: 'POST',
-          headers: VaultHeaders,
-          body,
-        });
-    
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-    
-        const result = await response.json();
-        console.log(result);
-        const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
-        console.log(responseEmail);
-        
-        return result
-      } catch (error) {
-        console.log(error);
+      const VaultHeaders = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${tokens}`,
+      };
+  
+      const response = await fetch("https://iccom.convadis.ch/api/v1/capp-profiles-vaults", {
+        method: 'POST',
+        headers: VaultHeaders,
+        body,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
-      console.log(res);
-      sendEmail(event.data.object.billing_details?.email);
-
+  
+      const result = await response.json();
+      console.log(result);
+      const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
+      console.log(responseEmail);
       
-      
-      // console.log(event.data.object);
-      // console.log(event.data.object);
-      // Unexpected event type
+      return result
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log(res);
+    sendEmail(event.data.object.billing_details?.email);
   }
-  // console.log(event.data.object.billing_details?.email);
-  // Acknowledge receipt of the event
+
   response.status(200).send('Event received');
 });
 
