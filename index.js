@@ -346,10 +346,16 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
             },
           ]
         });
+        const tokens = await fetchToken(); 
+
+        const VaultHeaders = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokens}`,
+        };
     
-        const response = await fetch(url, {
+        const response = await fetch("https://iccom.convadis.ch/api/v1/capp-profiles-vaults", {
           method: 'POST',
-          headers,
+          headers: VaultHeaders,
           body,
         });
     
