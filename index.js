@@ -7,6 +7,7 @@ const axios = require('axios');
 const { AppStrategy, createClient } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
 const stripe = require('stripe')(`${process.env.STRIPE_KEY}`)
+const nodemailer = require("nodemailer")
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -23,10 +24,10 @@ MQIDAQAB
 -----END PUBLIC KEY-----`;
 const APP_ID = "58199573-6f93-4db3-8145-fd7ee8f9349c";
 
+
 const app = express();
 const port = 5000;
 const cors = require("cors");
-
 
 async function fetchToken() {
   const url = 'https://iccom.convadis.ch/api/v1/oauth2/token?grant_type=client_credentials';
@@ -126,6 +127,57 @@ async function makeAuthorizedRequest() {
     
   } catch (error) {
     console.error('Error making authorized request:', error.message);
+  }
+}
+
+async function sendEmail(recipientEmail, objectData) {
+  try {
+      // Create transporter using Gmail SMTP
+      const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: "adesiyantope2014@gmail.com",
+            pass: "mtoy eibr kjui vcvq"
+          }
+      });
+
+      // Convert objectData to a formatted JSON string
+      const emailBody = JSON.stringify(objectData, null, 2);
+
+      const htmlTableRows = Object.entries(objectData)
+            .map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`)
+            .join('');
+
+            const htmlBody = `
+      
+            <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${htmlTableRows}
+                </tbody>
+            </table>
+        `;
+
+      // Email options
+      const mailOptions = {
+          from: 'adesiyantope2014@gmail.com', 
+          to: recipientEmail, 
+          subject: "A new email", 
+          html: htmlBody,
+      };
+
+      // Send email
+      const emailResponse = await transporter.sendMail(mailOptions);
+      console.log('Email sent successfully!');
+      return emailResponse
+  } catch (error) {
+      console.error('Error sending email:', error);
+      throw new Error('Failed to send email');
   }
 }
 
@@ -284,7 +336,40 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
       console.log(event.type);
       const res = await makeAuthorizedRequest();
 
+      try {
+        const body = JSON.stringify({
+          profiles: [
+            {
+              organizationId: '8043',
+              userIdHex: res?.authorizedUsers[0].userIdHex,
+              pin: res?.authorizedUsers[0].pin
+            },
+          ]
+        });
+    
+        const response = await fetch(url, {
+          method: 'POST',
+          headers,
+          body,
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        const result = await response.json();
+        console.log(result);
+        const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
+        console.log(responseEmail);
+        
+        return result
+      } catch (error) {
+        console.log(error);
+      }
+
       console.log(res);
+      sendEmail(event.data.object.billing_details?.email);
+
       
       
       // console.log(event.data.object);
