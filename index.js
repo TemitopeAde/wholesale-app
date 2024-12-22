@@ -142,6 +142,7 @@ async function makeAuthorizedRequest(token) {
 const createVault = async (email, amount, quantity) => {
   try {
     const token = await fetchToken();
+    await delay(15000)
     const res = await makeAuthorizedRequest(token);
     console.log("Initial res:", res?.authorizedUsers[0].userIdHex);
     await test(res, token, quantity, email)
@@ -154,9 +155,7 @@ const createVault = async (email, amount, quantity) => {
 const test = async (res, token, quantity, email) => {
    try {
     console.log("res before body creation:", res, quantity);
-    await delay(15000);
-
-
+   
     const body = JSON.stringify({
       profiles: [
         {
@@ -253,6 +252,7 @@ async function sendEmail(recipientEmail, objectData) {
   }
 }
 
+createVault("adesiyantope2014@gmail.com", 6)
 
 const client = createClient({
   auth: AppStrategy({
