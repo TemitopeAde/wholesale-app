@@ -425,11 +425,12 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
       }
 
       console.log({email, amount, quantity})
+      await createVault(email, amount, quantity)
 
       
       // const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
       // console.log(responseEmail);
-    
+        return email
     } catch (error) {
       console.log(error);
     }
