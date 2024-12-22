@@ -134,12 +134,12 @@ async function makeAuthorizedRequest(token) {
   }
 }
 
-const createVault = async () => {
+const createVault = async (email, amount, quantity) => {
   try {
     const token = await fetchToken();
     const res = await makeAuthorizedRequest(token);
     console.log("Initial res:", res?.authorizedUsers[0].userIdHex);
-    await test(res, token)
+    await test(res, token, quantity, email)
     return res
   } catch (error) {
     console.log(error);
@@ -147,7 +147,7 @@ const createVault = async () => {
 };
 
 
-const test = async (res, token) => {
+const test = async (res, token, quantity, email) => {
    try {
     console.log("res before body creation:", res);
 
@@ -159,7 +159,7 @@ const test = async (res, token) => {
           pin: res?.authorizedUsers[0].pin
         },
       ],
-      lifetimeInHours: 1
+      lifetimeInHours: parseInt(quantity)
     });
 
     console.log("Request Body:", body);
@@ -184,7 +184,7 @@ const test = async (res, token) => {
     const result = await response.json();
     console.log("API Result:", result);
     if (result) {
-      await sendEmail("adesiyantope2014@gmail.com", result)
+      await sendEmail(email, result)
     } else {
       console.log("not data to send"); 
     }
