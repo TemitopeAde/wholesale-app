@@ -408,7 +408,23 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
       const email = event.data.object.billing_details?.email;
       const amount =event.data.object.amount_captured;
 
+      let quantity = 0; 
+
+      if (amount === 26000) {
+          quantity = 6;
+      } else if (amount === 25000) {
+          quantity = 5;
+      } else if (amount === 24000) {
+          quantity = 4;
+      } else if (amount === 23000) {
+        quantity = 3;
+      } else if (amount===19000) {
+        quantity = 1
+      }
+
       console.log({email, amount})
+
+      
       const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
       console.log(responseEmail);
     
