@@ -408,14 +408,10 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
       const email = event.data.object.billing_details?.email;
       const amount =event.data.object.amount_captured;
 
-      console.log({email, amount});
-      
-
-      
+      console.log({email, amount})
       const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
       console.log(responseEmail);
-      
-      return result
+    
     } catch (error) {
       console.log(error);
     }
