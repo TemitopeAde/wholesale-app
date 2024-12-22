@@ -29,6 +29,11 @@ const app = express();
 const port = 5000;
 const cors = require("cors");
 
+
+// Delay function that returns a Promise resolving after a given time in ms
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+
 async function fetchToken() {
   const url = 'https://iccom.convadis.ch/api/v1/oauth2/token?grant_type=client_credentials';
   const username = 'RuV6xLGoyJUN83U3pFOX';
@@ -146,10 +151,11 @@ const createVault = async (email, amount, quantity) => {
   }
 };
 
-
 const test = async (res, token, quantity, email) => {
    try {
-    console.log("res before body creation:", res);
+    console.log("res before body creation:", res, quantity);
+    await delay(15000);
+
 
     const body = JSON.stringify({
       profiles: [
@@ -194,11 +200,6 @@ const test = async (res, token, quantity, email) => {
     console.error("Error in createVault:", error);
   }
 }
-
-// createVault()
-
-
-// makeAuthorizedRequest()
 
 async function sendEmail(recipientEmail, objectData) {
   try {
