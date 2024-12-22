@@ -59,6 +59,8 @@ async function fetchToken() {
   }
 }
 
+// fetchToken();
+
 function generateRandomHexId(length) {
   const characters = '0123456789ABCDEF';
   let result = '';
@@ -81,9 +83,11 @@ function generateRandomReservationId(min = 1000, max = 4294967295) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-async function makeAuthorizedRequest() {
+async function makeAuthorizedRequest(token) {
+  console.log(token);
+  
   try {
-    const token = await fetchToken(); 
+    // const token = await fetchToken(); 
     const reservationId = generateRandomReservationId();
 
     const url = `https://iccom.convadis.ch/api/v1/organizations/8043/reservations/${reservationId}`;
@@ -122,13 +126,79 @@ async function makeAuthorizedRequest() {
     }
 
     const result = await response.json();
-    console.log('Response:', result);
+    // console.log('Response:', result);
     return result
     
   } catch (error) {
     console.error('Error making authorized request:', error.message);
   }
 }
+
+const createVault = async () => {
+  try {
+    const token = await fetchToken();
+    const res = await makeAuthorizedRequest(token);
+    console.log("Initial res:", res?.authorizedUsers[0].userIdHex);
+    await test(res, token)
+    return res
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+const test = async (res, token) => {
+   try {
+    console.log("res before body creation:", res);
+
+    const body = JSON.stringify({
+      profiles: [
+        {
+          organizationId: '8043',
+          cappUserIdHex: res?.authorizedUsers[0].userIdHex,
+          pin: res?.authorizedUsers[0].pin
+        },
+      ],
+      lifetimeInHours: 1
+    });
+
+    console.log("Request Body:", body);
+
+    const header = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const response = await fetch("https://iccom.convadis.ch/api/v1/capp-profiles-vaults", {
+      method: 'POST',
+      headers: header,
+      body,
+    });
+
+    console.log("Response Status:", response.status);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log("API Result:", result);
+    if (result) {
+      await sendEmail("adesiyantope2014@gmail.com", result)
+    } else {
+      console.log("not data to send"); 
+    }
+    
+    return result;
+  } catch (error) {
+    console.error("Error in createVault:", error);
+  }
+}
+
+// createVault()
+
+
+// makeAuthorizedRequest()
 
 async function sendEmail(recipientEmail, objectData) {
   try {
@@ -143,6 +213,7 @@ async function sendEmail(recipientEmail, objectData) {
 
       // Convert objectData to a formatted JSON string
       const emailBody = JSON.stringify(objectData, null, 2);
+      
 
       const htmlTableRows = Object.entries(objectData)
             .map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`)
@@ -313,6 +384,7 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
   console.log(event, event);  
 })
 
+
 app.post('/payments', express.raw({ type: 'application/json' }), async (request, response) => {
   const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
   const payload = request.body;  // The raw body sent by Stripe
@@ -331,37 +403,15 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
 
 
   if (event.type ==="charge.succeeded") {
-    const res = await makeAuthorizedRequest();
-
     try {
-      const body = JSON.stringify({
-        profiles: [
-          {
-            organizationId: '8043',
-            userIdHex: res?.authorizedUsers[0].userIdHex,
-            pin: res?.authorizedUsers[0].pin
-          },
-        ]
-      });
-      const tokens = await fetchToken(); 
+      // await createVault()
+      const email = event.data.object.billing_details?.email;
+      const amount =event.data.object.amount_captured;
 
-      const VaultHeaders = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokens}`,
-      };
-  
-      const response = await fetch("https://iccom.convadis.ch/api/v1/capp-profiles-vaults", {
-        method: 'POST',
-        headers: VaultHeaders,
-        body,
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const result = await response.json();
-      console.log(result);
+      console.log({email, amount});
+      
+
+      
       const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
       console.log(responseEmail);
       
@@ -370,13 +420,10 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
       console.log(error);
     }
 
-    console.log(res);
-    sendEmail(event.data.object.billing_details?.email);
   }
 
   response.status(200).send('Event received');
 });
-
 
 app.use(cors("*"))
 app.use(bodyParser.text()); 
@@ -797,55 +844,6 @@ app.post("/append-data", async (req, res) => {
   }
 });
 
-
-
-
-
-
-// app.post('/payments', express.raw({type: 'application/json'}), (request, response) => {
-//   // console.log(request);
-//   const endpointSecret = process.env.WEBHOOK_SECRET
-//   let event = request.body;
-  
-//   if (endpointSecret) {
-//     // Get the signature sent by Stripe
-//     const signature = request.headers['stripe-signature'];
-//     console.log(request.body);
-//     console.log(signature);
-//     console.log(endpointSecret)
-//     try {
-//       event = stripe.webhooks.constructEvent(
-//         request.body,
-//         signature,
-//         endpointSecret
-//       );
-//     } catch (err) {
-//       console.log(`⚠️  Webhook signature verification failed.`, err.message);
-//       return response.sendStatus(400);
-//     }
-//   }
-
-//   // Handle the event
-//   switch (event.type) {
-//     case 'payment_intent.succeeded':
-//       const paymentIntent = event.data.object;
-//       console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-//       // Then define and call a method to handle the successful payment intent.
-//       // handlePaymentIntentSucceeded(paymentIntent);
-//       break;
-//     case 'payment_method.attached':
-//       const paymentMethod = event.data.object;
-//       // Then define and call a method to handle the successful attachment of a PaymentMethod.
-//       // handlePaymentMethodAttached(paymentMethod);
-//       break;
-//     default:
-//       // Unexpected event type
-//       console.log(`Unhandled event type ${event.type}.`);
-//   }
-
-//   // Return a 200 response to acknowledge receipt of the event
-//   response.send();
-// });
 
 
 
