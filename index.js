@@ -406,7 +406,7 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
     try {
       // await createVault()
       const email = event.data.object.billing_details?.email;
-      const amount =event.data.object.amount_captured;
+      const amount =parseInt(event.data.object.amount_captured);
 
       let quantity = 0; 
 
@@ -420,13 +420,15 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
         quantity = 3;
       } else if (amount===19000) {
         quantity = 1
+      } else {
+        console.log(amount);
       }
 
-      console.log({email, amount})
+      console.log({email, amount, quantity})
 
       
-      const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
-      console.log(responseEmail);
+      // const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
+      // console.log(responseEmail);
     
     } catch (error) {
       console.log(error);
