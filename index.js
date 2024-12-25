@@ -112,8 +112,8 @@ async function makeAuthorizedRequest(token) {
       authorizedUsers: [
         {
           identityDevice: 'CAPP',
-          userIdHex: generatedId,
-          pin: generatedPin,
+          userIdHex: "57696B6970656469612C207468652066",
+          pin: "123456",
         },
       ],
       showCardPin: true,
@@ -258,7 +258,7 @@ async function sendEmail(recipientEmail, objectData) {
   }
 }
 
-createVault("adesiyantope2014@gmail.com", 25000, 6)
+createVault("adesiyantope2014@gmail.com", 25000, 6);
 
 const client = createClient({
   auth: AppStrategy({
