@@ -31,7 +31,7 @@ const cors = require("cors");
 
 
 // Delay function that returns a Promise resolving after a given time in ms
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 
 async function fetchToken() {
@@ -64,7 +64,7 @@ async function fetchToken() {
   }
 }
 
-// fetchToken();
+
 
 function generateRandomHexId(length) {
   const characters = '0123456789ABCDEF';
@@ -142,13 +142,13 @@ async function makeAuthorizedRequest(token) {
 const createVault = async (email, amount, quantity) => {
   try {
     const token = await fetchToken();
-    await delay(15000)
+    // await delay(15000)
     const res = await makeAuthorizedRequest(token);
     console.log("Initial res:", res?.authorizedUsers[0].userIdHex);
     await test(res, token, quantity, email)
     return res
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 };
 
@@ -187,9 +187,15 @@ const test = async (res, token, quantity, email) => {
     }
 
     const result = await response.json();
-    console.log("API Result:", result);
+    console.log("API Result:", result)
+    result.email = email;
     if (result) {
-      await sendEmail(email, result)
+      await fetch("https://qooad.com/_functions-dev/send", {
+        method: "POST",
+        body: JSON.stringify({
+          result,
+        })
+      })
     } else {
       console.log("not data to send"); 
     }
@@ -252,7 +258,7 @@ async function sendEmail(recipientEmail, objectData) {
   }
 }
 
-createVault("adesiyantope2014@gmail.com", 6)
+createVault("adesiyantope2014@gmail.com", 25000, 6)
 
 const client = createClient({
   auth: AppStrategy({
