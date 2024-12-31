@@ -916,10 +916,34 @@ app.post("/append-data", async (req, res) => {
   }
 });
 
-const fetchPets = async (page, id) => {
-  const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=${page}&take=30`;
-  console.log(url);
-  
+
+// const fetchPets = async (id) => {
+//   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
+
+//   try {
+//     const response = await fetch(url, { method: "GET" });
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
+
+//     const xmlText = await response.text();
+
+//     const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
+
+//     const pets = jsonResult.ActiveAnimalSearchResults.AnimalSearch;
+
+//     const sortedPets = pets.sort((a, b) => a.Name.localeCompare(b.Name));
+
+//     return sortedPets;
+//   } catch (error) {
+//     console.error("Error fetching or converting pets:", error.message);
+//   }
+// };
+
+const fetchPets = async (id) => {
+  const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
+
   try {
     const response = await fetch(url, { method: "GET" });
 
@@ -927,18 +951,21 @@ const fetchPets = async (page, id) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const xmlText = await response.text(); // Get the XML response as a string
+    const xmlText = await response.text();
 
-    // Convert XML to JSON
     const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
-    // console.log("Converted JSON:", jsonResult);
-    return jsonResult
+
+    const pets = jsonResult.ActiveAnimalSearchResults.AnimalSearch;
+
+    const filteredPets = pets.filter(pet => !pet.Stage || !pet.Stage.includes("Adopted"));
+
+    const sortedPets = filteredPets.sort((a, b) => a.Name.localeCompare(b.Name));
+
+    return sortedPets;
   } catch (error) {
     console.error("Error fetching or converting pets:", error.message);
   }
 };
-
-
 
 
 
