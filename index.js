@@ -150,20 +150,20 @@ async function makeAuthorizedRequest(token) {
 
 // makeAuthorizedRequest()
 
-const createVault = async (email, amount, quantity) => {
+const createVault = async (email, amount, quantity, name) => {
   try {
     const token = await fetchToken();
     // await delay(15000)
     const res = await makeAuthorizedRequest(token);
     console.log("Initial res:", res?.authorizedUsers[0].userIdHex);
-    await test(res, token, quantity, email)
+    await test(res, token, quantity, email, name)
     return res
   } catch (error) {
     console.log(error)
   }
 };
 
-const test = async (res, token, quantity, email) => {
+const test = async (res, token, quantity, email, name) => {
    try {
     console.log("res before body creation:", res, quantity);
    
@@ -172,7 +172,7 @@ const test = async (res, token, quantity, email) => {
         {
           organizationId: '8043',
           cappUserIdHex: res?.authorizedUsers[0].userIdHex,
-          pin: res?.authorizedUsers[0].pin
+          name: name
         },
       ],
       lifetimeInHours: parseInt(quantity)
@@ -200,6 +200,8 @@ const test = async (res, token, quantity, email) => {
     const result = await response.json();
     console.log("API Result:", result)
     result.email = email;
+    result["App link Iphone"] = "https://apps.apple.com/app/id1440728633"
+    result["App link Android"] = "https://play.google.com/store/apps/details?id=ch.convadis.carsharing&hl=en&pli=1"
     if (result) {
       sendEmail(email, result)
       await fetch("https://qooad.com/_functions-dev/send", {
@@ -447,6 +449,7 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
     try {
       // await createVault()
       const email = event.data.object.billing_details?.email;
+      const name = event.data.object.billing_details?.name;
       const amount =parseInt(event.data.object.amount_captured);
 
       let quantity = 0; 
@@ -466,7 +469,7 @@ app.post('/payments', express.raw({ type: 'application/json' }), async (request,
       }
 
       console.log({email, amount, quantity})
-      await createVault(email, amount, quantity)
+      await createVault(email, amount, quantity, name)
 
       
       // const responseEmail = await sendEmail(event.data.object.billing_details?.email, result);
