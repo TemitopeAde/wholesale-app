@@ -84,9 +84,11 @@ function generateRandomPin(length) {
   return parseInt(result, 10);
 }
 
-function generateRandomReservationId(min = 1000, max = 4294967295) {
+function generateRandomReservationId(min = 1000, max = 429496729) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+
 
 async function makeAuthorizedRequest(token) {
   console.log(token);
@@ -112,13 +114,20 @@ async function makeAuthorizedRequest(token) {
       authorizedUsers: [
         {
           identityDevice: 'CAPP',
-          userIdHex: "57696B6970656469612C207468652066",
-          pin: "123456",
+          userIdHex: generatedId,
+          pin: parseInt(generatedPin),
         },
       ],
       showCardPin: true,
       permanent: false,
     });
+
+    console.log({
+      generatedId,
+      generatedPin,
+      reservationId
+    });
+    
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -131,13 +140,15 @@ async function makeAuthorizedRequest(token) {
     }
 
     const result = await response.json();
-    // console.log('Response:', result);
+    console.log('Response:', result);
     return result
     
   } catch (error) {
     console.error('Error making authorized request:', error.message);
   }
 }
+
+// makeAuthorizedRequest()
 
 const createVault = async (email, amount, quantity) => {
   try {
