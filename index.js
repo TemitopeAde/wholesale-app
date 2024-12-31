@@ -493,11 +493,12 @@ app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 app.get("/get-pets", async (req, res) => {
-  const page = req.query.page || 1;
+  console.log(req.query.id);
+  
   const id = req.query.id
   
   try {
-    const petsData = await fetchPets(page, id);
+    const petsData = await fetchPets(id);
     res.status(200).json(petsData); 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -943,7 +944,8 @@ app.post("/append-data", async (req, res) => {
 
 const fetchPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
-
+  console.log(url);
+  
   try {
     const response = await fetch(url, { method: "GET" });
 
