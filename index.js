@@ -8,6 +8,7 @@ const { AppStrategy, createClient } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
 const stripe = require('stripe')(`${process.env.STRIPE_KEY}`)
 const nodemailer = require("nodemailer")
+const xml2js = require('xml2js');
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -491,6 +492,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
+app.get("/get-pets", async (req, res) => {
+  const page = req.query.page || 1;
+  const id = req.query.id
+  
+  try {
+    const petsData = await fetchPets(page, id);
+    res.status(200).json(petsData); 
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.use((req, res, next) => {
   const encoding = req.headers['content-encoding'];
   
@@ -903,8 +916,27 @@ app.post("/append-data", async (req, res) => {
   }
 });
 
+const fetchPets = async (page, id) => {
+  const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=${page}&take=30`;
+  console.log(url);
+  
+  try {
+    const response = await fetch(url, { method: "GET" });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
+    const xmlText = await response.text(); // Get the XML response as a string
+
+    // Convert XML to JSON
+    const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
+    // console.log("Converted JSON:", jsonResult);
+    return jsonResult
+  } catch (error) {
+    console.error("Error fetching or converting pets:", error.message);
+  }
+};
 
 
 
