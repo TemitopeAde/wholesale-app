@@ -917,6 +917,20 @@ app.post("/append-data", async (req, res) => {
   }
 });
 
+app.get("/pet/:id", async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const petDetails = await fetchSinglePet(id);
+    if (!petDetails) {
+      return res.status(500).json({ error: "Failed to fetch pet details" });
+    }
+    res.status(200).json(petDetails);
+  } catch (error) {
+    console.error("Error in /api/pet/:id route:", error.message);
+    res.status(500).json({ error: "An unexpected error occurred" });
+  }
+});
 
 // const fetchPets = async (id) => {
 //   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
@@ -944,7 +958,7 @@ app.post("/append-data", async (req, res) => {
 
 const fetchPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
-  console.log(url);
+  // console.log(url);
   
   try {
     const response = await fetch(url, { method: "GET" });
@@ -962,14 +976,48 @@ const fetchPets = async (id) => {
     const filteredPets = pets.filter(pet => !pet.Stage || !pet.Stage.includes("Adopted"));
 
     const sortedPets = filteredPets.sort((a, b) => a.Name.localeCompare(b.Name));
-
+    console.log(sortedPets.length);
+    
     return sortedPets;
   } catch (error) {
     console.error("Error fetching or converting pets:", error.message);
   }
 };
 
+const fetchSinglePet = async (id) => {
+  const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchDetails?animalID=${id}&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o`;
+  console.log(url);
+  
+  try {
+    const response = await fetch(url, { method: "GET" });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const xmlText = await response.text();
+
+    const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
+    console.log(jsonResult?.site);
+
+    const animalDetails = jsonResult.AnimalSearchDetails;
+    
+    // Extract photos into an array
+    const photos = Object.keys(animalDetails)
+      .filter(key => key.startsWith("Photo") && animalDetails[key].trim() !== "")
+      .map(key => animalDetails[key]);
+
+    console.log("Photos:", photos);
+    return { ...animalDetails, photos };
+  } catch (error) {
+    console.error("Error fetching or converting pets:", error.message);
+  }
+};
+
+
+
+
+// fetchSinglePet("57209263");
 
 app.listen(port, () => {
   console.log(`Custom route server listening at http://localhost:${port}`);
