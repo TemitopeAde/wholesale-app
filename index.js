@@ -972,11 +972,11 @@ const fetchPets = async (id) => {
     const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
 
     const pets = jsonResult.ActiveAnimalSearchResults.AnimalSearch;
-
-    const filteredPets = pets.filter(pet => !pet.Stage || !pet.Stage.includes("Adopted"));
-
-    const sortedPets = filteredPets.sort((a, b) => a.Name.localeCompare(b.Name));
-    console.log(sortedPets.length);
+    
+    
+    const mainSitePets = pets.filter(pet => pet.Site === "Main");    
+    const sortedPets = mainSitePets.sort((a, b) => a.Name.localeCompare(b.Name));
+    
     
     return sortedPets;
   } catch (error) {
