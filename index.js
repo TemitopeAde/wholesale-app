@@ -619,9 +619,35 @@ app.post("/v1/list-triggers", async (req, res) => {
   }
 });
 
+function verify(eventData, signature) {
+  const hmac = crypto.createHmac('sha512', API_SECRET_KEY);
+  const expectedSignature = hmac.update(JSON.stringify(eventData)).digest('hex');
+  return expectedSignature === signature;
+}
+
 app.post('/paystack/webhook', (req, res) => {
   const eventData = req.body;
-  console.log(eventData);
+  const signature = req.headers['x-paystack-signature'];
+
+  if (!verify(eventData, signature)) {
+    return res.sendStatus(400);
+  }
+
+  if (eventData?.event === "charge.success") {
+    const cartData = eventData?.data?.metadata;
+    const email = eventData?.data?.customer?.email;
+    const reference = eventData?.data?.reference;
+    const amount = eventData?.data?.amount;
+    const ip = eventData?.data?.ip_address;
+    const currency = eventData?.data?.currency;
+    const customerCode = eventData?.data?.customer?.customer_code;
+    const paidAt = eventData?.data?.paidAt
+    console.log({
+      cartData,
+      email, reference
+    });
+    
+  }
   res.sendStatus(200);
 });
 
