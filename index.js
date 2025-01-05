@@ -619,6 +619,12 @@ app.post("/v1/list-triggers", async (req, res) => {
   }
 });
 
+app.post('/paystack/webhook', (req, res) => {
+  const eventData = req.body;
+  console.log(eventData);
+  res.sendStatus(200);
+});
+
 // Route to fetch parts data from the external API
 app.get('/api/part', async (req, res) => {
   console.log(req.query);
@@ -932,29 +938,6 @@ app.get("/pet/:id", async (req, res) => {
   }
 });
 
-// const fetchPets = async (id) => {
-//   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
-
-//   try {
-//     const response = await fetch(url, { method: "GET" });
-
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
-
-//     const xmlText = await response.text();
-
-//     const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
-
-//     const pets = jsonResult.ActiveAnimalSearchResults.AnimalSearch;
-
-//     const sortedPets = pets.sort((a, b) => a.Name.localeCompare(b.Name));
-
-//     return sortedPets;
-//   } catch (error) {
-//     console.error("Error fetching or converting pets:", error.message);
-//   }
-// };
 
 const fetchPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
@@ -1014,10 +997,6 @@ const fetchSinglePet = async (id) => {
   }
 };
 
-
-
-
-// fetchSinglePet("57209263");
 
 app.listen(port, () => {
   console.log(`Custom route server listening at http://localhost:${port}`);
