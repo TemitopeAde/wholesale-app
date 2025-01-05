@@ -630,6 +630,8 @@ function verify(eventData, signature) {
 app.post('/paystack/webhook', (req, res) => {
   const eventData = req.body;
   const signature = req.headers['x-paystack-signature'];
+  console.log(signature);
+  
 
   if (!verify(eventData, signature)) {
     return res.sendStatus(400);
