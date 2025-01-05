@@ -620,6 +620,7 @@ app.post("/v1/list-triggers", async (req, res) => {
 });
 
 function verify(eventData, signature) {
+  const API_SECRET_KEY = "MY_KEY"
   const hmac = crypto.createHmac('sha512', API_SECRET_KEY);
   const expectedSignature = hmac.update(JSON.stringify(eventData)).digest('hex');
   return expectedSignature === signature;
