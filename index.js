@@ -9,6 +9,7 @@ const { appInstances } = require("@wix/app-management");
 const stripe = require('stripe')(`${process.env.STRIPE_KEY}`)
 const nodemailer = require("nodemailer")
 const xml2js = require('xml2js');
+const crypto =  require("crypto");
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
