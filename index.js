@@ -620,44 +620,7 @@ app.post("/v1/list-triggers", async (req, res) => {
   }
 });
 
-function verify(eventData, signature) {
-  const API_SECRET_KEY = "sk_test_0dd807b089372467232a43cd8cd5e4ebbf8697c1"
-  const hmac = crypto.createHmac('sha512', API_SECRET_KEY);
-  const expectedSignature = hmac.update(JSON.stringify(eventData)).digest('hex');
-  console.log({expectedSignature, signature });
-  
-  return expectedSignature === signature;
-}
 
-app.post('/paystack/webhook', (req, res) => {
-  const eventData = req.body;
-  const signature = req.headers['x-paystack-signature'];
-  console.log(signature);
-  
-
-  if (!verify(eventData, signature)) {
-    return res.sendStatus(400);
-  }
-
-  if (eventData?.event === "charge.success") {
-    const cartData = eventData?.data?.metadata;
-    const email = eventData?.data?.customer?.email;
-    const reference = eventData?.data?.reference;
-    const amount = eventData?.data?.amount;
-    const ip = eventData?.data?.ip_address;
-    const currency = eventData?.data?.currency;
-    const customerCode = eventData?.data?.customer?.customer_code;
-    const paidAt = eventData?.data?.paidAt
-    console.log({
-      cartData,
-      email, reference
-    });
-    
-  }
-  res.sendStatus(200);
-});
-
-// Route to fetch parts data from the external API
 app.get('/api/part', async (req, res) => {
   console.log(req.query);
   
@@ -875,7 +838,6 @@ app.get("/get-one", async (req, res) => {
   }
 });
 
-
 app.post("/append-data", async (req, res) => {
   const dataObject = req.body; 
   const agencyId = dataObject["Agency ID"];
@@ -971,9 +933,11 @@ app.get("/pet/:id", async (req, res) => {
 });
 
 
+
 const fetchPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
-  // console.log(url);
+  
+  console.log(url);
   
   try {
     const response = await fetch(url, { method: "GET" });
@@ -992,12 +956,59 @@ const fetchPets = async (id) => {
     const mainSitePets = pets.filter(pet => pet.Site === "Main");    
     const sortedPets = mainSitePets.sort((a, b) => a.Name.localeCompare(b.Name));
     
-    
     return sortedPets;
   } catch (error) {
     console.error("Error fetching or converting pets:", error.message);
   }
 };
+
+app.get("/lost-pet", async (req, res) => {
+
+  try {
+    const {id}= req.query
+    const pets = await lostPets(id);
+
+    if (pets && pets.ArrayOfXmlNode && pets.ArrayOfXmlNode.XmlNode) {
+      res.status(200).json(pets.ArrayOfXmlNode.XmlNode); // Return only the array
+    } else {
+      res.status(404).json({ msg: "No pets found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error fetching lost pets",
+    });
+  }
+});
+
+
+const lostPets = async (id) => {
+  const url = `https://ws.petango.com/webservices/wsAdoption.asmx/lostSearch?speciesID=${id}&sex=A&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&ageGroup=ALL&orderBy=Sex`;
+  
+  console.log(url);
+  
+  try {
+    const response = await fetch(url, { method: "GET" });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const xmlText = await response.text();
+
+
+    const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
+
+    const pets = jsonResult
+    console.log(pets);
+    
+    
+    return pets
+  } catch (error) {
+    console.error("Error fetching or converting pets:", error.message);
+  }
+};
+
+// lostPets()
 
 const fetchSinglePet = async (id) => {
   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchDetails?animalID=${id}&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o`;
@@ -1028,7 +1039,6 @@ const fetchSinglePet = async (id) => {
     console.error("Error fetching or converting pets:", error.message);
   }
 };
-
 
 app.listen(port, () => {
   console.log(`Custom route server listening at http://localhost:${port}`);
