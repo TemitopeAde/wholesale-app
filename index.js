@@ -981,6 +981,22 @@ app.get("/lost-pet", async (req, res) => {
 });
 
 
+app.get("/lost-pet-single", async (req, res) => {
+
+  try {
+    const {id}= req.query
+    const pets = await lostSinglePet(id);
+
+    res.status(200).json(pets)
+
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error fetching lost pets",
+    });
+  }
+});
+
+
 const lostPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsAdoption.asmx/lostSearch?speciesID=${id}&sex=A&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&ageGroup=ALL&orderBy=Sex`;
   
@@ -1008,7 +1024,41 @@ const lostPets = async (id) => {
   }
 };
 
-// lostPets()
+const lostSinglePet = async (id) => {
+  const url = `https://ws.petango.com/webservices/wsAdoption.asmx/lostDetails?animalID=${id}&sex=A&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o`;
+  
+  console.log(url);
+  
+  try {
+    const response = await fetch(url, { method: "GET" });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const xmlText = await response.text();
+    const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
+
+    const animalDetails = jsonResult.lostDetails;
+
+    const photos = Object.keys(animalDetails)
+      .filter(key => key.startsWith("Photo") && animalDetails[key].trim() !== "")
+      .map(key => animalDetails[key]);
+
+    
+    // console.log(photos, animalDetails);
+      
+
+    // Return the full pet object with the extracted photos
+    return { ...animalDetails, photos };
+
+  } catch (error) {
+    console.error("Error fetching or converting pets:", error.message);
+  }
+};
+
+
+
 
 const fetchSinglePet = async (id) => {
   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchDetails?animalID=${id}&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o`;
@@ -1033,7 +1083,6 @@ const fetchSinglePet = async (id) => {
       .filter(key => key.startsWith("Photo") && animalDetails[key].trim() !== "")
       .map(key => animalDetails[key]);
 
-    console.log("Photos:", photos);
     return { ...animalDetails, photos };
   } catch (error) {
     console.error("Error fetching or converting pets:", error.message);
