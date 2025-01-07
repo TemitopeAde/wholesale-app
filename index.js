@@ -342,126 +342,13 @@ function generateUniqueCode() {
   return uniqueCode;
 }
 
-// client.appInstances.onAppInstanceInstalled(async (event) => {
-//   console.log(event);
-//   let status = {}
-  
-//   const appId = event.data?.appId;
-//   const instanceId = event.metadata?.instanceId;
-  
-
-//   const payload = {
-//     grant_type: "client_credentials",
-//     client_id: appId,
-//     client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
-//     instance_id: instanceId,
-//   };
-
-//   const headers = {
-//     "Content-Type": "application/json",
-//   };
-
-//   try {
-//     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
-//     const accessToken = response.data.access_token; 
-
-//     const id = generateUniqueCode()
-
-//     const options = {
-//       dataCollectionId: "Accesscodes",
-//       dataItem: {
-//         _id: id,
-//         data: {
-//           _id: id,
-//           ...response.data
-//         }
-//       }
-//     }
-
-//     console.log({options});
-    
-
-//     await saveDataItem(options)
-
-//     const instanceHeader = {
-//       "Content-Type": "application/json",
-//       "Authorization": `${accessToken}`
-//     }
-
-//     const instanceResponse = await axios.get(
-//       "https://www.wixapis.com/apps/v1/instance",
-//       { headers: instanceHeader } 
-//     );
-
-//     const isFree = instanceResponse?.data?.instance?.isFree;
-
-//     if (isFree === false) {
-//       status.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
-//       status.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
-//       status.active = true;
-//       status.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
-//     } else {
-//       status.timeStamp = null
-//       status.expirationDate = null;
-//       status.active = false;
-//       status.autoRenewing = false;
-//     }
-
-//     console.log(status);
-    
-    
-//     try {
-//       const email = instanceResponse?.data?.site?.ownerEmail
-//       const app = instanceResponse?.data?.instance?.appName
-//       const site = instanceResponse?.data?.site?.url
-//       const siteId = instanceResponse?.data?.site?.siteId
-//       const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
-
-//       const body = {
-//         email, 
-//         app, 
-//         site, 
-//         siteId,
-//       };
-
-//       if (isFree===false) {
-//         body.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
-//         body.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
-//         body.active = true;
-//         body.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
-//       }
-
-//       const response = await fetch(endpoint, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(body),
-//       });
-  
-//       if (!response.ok) {
-//         throw new Error(`Failed to send email: ${response}`);
-//       }
-  
-//       const data = await response.json();
-//       console.log("Email sent successfully:", data);
-//     } catch (error) {
-//       console.error("Error sending email:", error.message);
-//     }
-  
-  
-//   } catch (error) {
-//     console.log(error);
-//   }
-// })
-
 client.appInstances.onAppInstanceInstalled(async (event) => {
   console.log(event);
-  let status = {};
-
+  let status = {}
+  
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
-
+  
   const payload = {
     grant_type: "client_credentials",
     client_id: appId,
@@ -474,40 +361,33 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   };
 
   try {
-    // Get the access and refresh tokens
-    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers });
-    const { access_token: accessToken, refresh_token: refreshToken } = response.data;
+    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+    const accessToken = response.data.access_token; 
 
-    // Generate a unique ID
-    const id = generateUniqueCode();
+    const id = generateUniqueCode()
 
-    // Save tokens and related data to the collection
     const options = {
       dataCollectionId: "Accesscodes",
       dataItem: {
         _id: id,
         data: {
           _id: id,
-          accessToken,
-          refreshToken,
-          ...response.data, // Include additional fields from the response if needed
-        },
-      },
-    };
+          ...response.data
+        }
+      }
+    }
 
-    console.log({ options });
 
-    await saveDataItem(options);
+    await saveDataItem(options)
 
-    // Retrieve instance details
     const instanceHeader = {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    };
+      "Authorization": `${accessToken}`
+    }
 
     const instanceResponse = await axios.get(
       "https://www.wixapis.com/apps/v1/instance",
-      { headers: instanceHeader }
+      { headers: instanceHeader } 
     );
 
     const isFree = instanceResponse?.data?.instance?.isFree;
@@ -518,58 +398,60 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       status.active = true;
       status.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
     } else {
-      status.timeStamp = null;
+      status.timeStamp = null
       status.expirationDate = null;
       status.active = false;
       status.autoRenewing = false;
     }
 
     console.log(status);
-
+    
+    
     try {
-      // Prepare email data
-      const email = instanceResponse?.data?.site?.ownerEmail;
-      const app = instanceResponse?.data?.instance?.appName;
-      const site = instanceResponse?.data?.site?.url;
-      const siteId = instanceResponse?.data?.site?.siteId;
-      const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
+      const email = instanceResponse?.data?.site?.ownerEmail
+      const app = instanceResponse?.data?.instance?.appName
+      const site = instanceResponse?.data?.site?.url
+      const siteId = instanceResponse?.data?.site?.siteId
+      const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
 
       const body = {
-        email,
-        app,
-        site,
+        email, 
+        app, 
+        site, 
         siteId,
       };
 
-      if (isFree === false) {
+      if (isFree===false) {
         body.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
         body.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
         body.active = true;
         body.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
       }
 
-      // Send email notification
-      const emailResponse = await fetch(endpoint, {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
       });
-
-      if (!emailResponse.ok) {
-        throw new Error(`Failed to send email: ${emailResponse}`);
+  
+      if (!response.ok) {
+        throw new Error(`Failed to send email: ${response}`);
       }
-
-      const data = await emailResponse.json();
+  
+      const data = await response.json();
       console.log("Email sent successfully:", data);
     } catch (error) {
-      console.error("Error sending email:", error.message)
+      console.error("Error sending email:", error.message);
     }
+  
+  
   } catch (error) {
-    console.error("Error handling app installation:", error);
+    console.log(error);
   }
-});
+})
+
 
 
 client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
@@ -585,7 +467,28 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
 })
 
 client.appInstances.onAppInstanceRemoved(async (event) => {
-  console.log(event, event);  
+  console.log(event, event);
+  const appId = event.data?.appId;
+  const instanceId = event.metadata?.instanceId;
+
+  const payload = {
+    grant_type: "client_credentials",
+    client_id: appId,
+    client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
+    instance_id: instanceId,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+    console.log(response);
+    
+  } catch (error) {
+    console.log(error.message);
+  }
 })
 
 app.post('/payments', express.raw({ type: 'application/json' }), async (request, response) => {
