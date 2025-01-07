@@ -31,12 +31,11 @@ const APP_ID = "58199573-6f93-4db3-8145-fd7ee8f9349c";
 const app = express();
 const port = 5000;
 const cors = require("cors");
+const { access } = require('fs');
 
 
 
-async function saveDataItem(data) {
-  const dataCollectionId = 'Accesscodes';
-
+async function saveDataItem(options) {
   const wixClient = createClient({ 
     modules: { items },
     auth: OAuthStrategy({ clientId: '9d779aee-799a-4e9a-a4dd-30f4935ff318' }),
@@ -46,8 +45,11 @@ async function saveDataItem(data) {
     const options = {
       dataCollectionId: "Accesscodes",
       dataItem: {
-        title: 'Sample Title', 
-        description: 'Sample Description', 
+        _id: "one-123",
+        data: {
+          _id: "one-123",
+          access: 124,
+        }
       }
     }
     const savedItem = await wixClient.items.saveDataItem(options)
@@ -360,6 +362,19 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
     const accessToken = response.data.access_token; 
 
+    const options = {
+      dataCollectionId: "Accesscodes",
+      dataItem: {
+        _id: "one-123",
+        data: {
+          _id: "one-123",
+          ...response.data
+        }
+      }
+    }
+
+    await saveDataItem(options)
+
     const instanceHeader = {
       "Content-Type": "application/json",
       "Authorization": `${accessToken}`
@@ -638,7 +653,6 @@ app.post("/v1/list-triggers", async (req, res) => {
     });
   }
 });
-
 
 app.get('/api/part', async (req, res) => {
   console.log(req.query);
@@ -951,8 +965,6 @@ app.get("/pet/:id", async (req, res) => {
   }
 });
 
-
-
 const fetchPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsactiveanimalsearch.asmx/AnimalSearchPageable?authKey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&speciesID=${id}&sex=All&ageGroup=&location=&site=&onHold=&orderBy=&primaryBreed=&secondaryBreed=&orgID=&stageID=&skip=&take=500`;
   
@@ -1015,7 +1027,6 @@ app.get("/found-pet", async (req, res) => {
     });
   }
 });
-
 
 app.get("/lost-pet-single", async (req, res) => {
 
