@@ -42,16 +42,7 @@ async function saveDataItem(options) {
   });
 
   try {
-    const options = {
-      dataCollectionId: "Accesscodes",
-      dataItem: {
-        _id: "one-123",
-        data: {
-          _id: "one-123",
-          access: 124,
-        }
-      }
-    }
+    
     const savedItem = await wixClient.items.saveDataItem(options)
 
     console.log('Item saved successfully:', savedItem);
