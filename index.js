@@ -564,7 +564,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       const data = await emailResponse.json();
       console.log("Email sent successfully:", data);
     } catch (error) {
-      console.error("Error sending email:", error.message);
+      console.error("Error sending email:", error.message)
     }
   } catch (error) {
     console.error("Error handling app installation:", error);
