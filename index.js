@@ -1,10 +1,11 @@
 require('dotenv').config();
 
+const  {items} = require('@wix/data')
 const express = require("express");
 const bodyParser = require("body-parser");
 const pako = require("pako");
 const axios = require('axios');
-const { AppStrategy, createClient } = require("@wix/sdk");
+const { AppStrategy, createClient, OAuthStrategy } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
 const stripe = require('stripe')(`${process.env.STRIPE_KEY}`)
 const nodemailer = require("nodemailer")
@@ -32,8 +33,34 @@ const port = 5000;
 const cors = require("cors");
 
 
-// Delay function that returns a Promise resolving after a given time in ms
-// const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function saveDataItem(data) {
+  const dataCollectionId = 'Accesscodes';
+
+  const wixClient = createClient({ 
+    modules: { items },
+    auth: OAuthStrategy({ clientId: '9d779aee-799a-4e9a-a4dd-30f4935ff318' }),
+  });
+
+  try {
+    const options = {
+      dataCollectionId: "Accesscodes",
+      dataItem: {
+        title: 'Sample Title', 
+        description: 'Sample Description', 
+      }
+    }
+    const savedItem = await wixClient.items.saveDataItem(options)
+
+    console.log('Item saved successfully:', savedItem);
+    return saveDataItem
+    
+  } catch (error) {
+    console.error('Failed to save item:', error);
+  }
+}
+
+// saveDataItem();
 
 
 async function fetchToken() {
@@ -66,8 +93,6 @@ async function fetchToken() {
   }
 }
 
-
-
 function generateRandomHexId(length) {
   const characters = '0123456789ABCDEF';
   let result = '';
@@ -89,8 +114,6 @@ function generateRandomPin(length) {
 function generateRandomReservationId(min = 1000, max = 429496729) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-
 
 async function makeAuthorizedRequest(token) {
   console.log(token);
@@ -149,8 +172,6 @@ async function makeAuthorizedRequest(token) {
     console.error('Error making authorized request:', error.message);
   }
 }
-
-// makeAuthorizedRequest()
 
 const createVault = async (email, amount, quantity, name) => {
   try {
@@ -296,8 +317,6 @@ const htmlBody = `
   }
 }
 
-// createVault("adesiyantope2014@gmail.com", 25000, 6);
-
 const client = createClient({
   auth: AppStrategy({
     appId: APP_ID,
@@ -413,8 +432,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   }
 })
 
+
 client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
-  console.log(event);
+  
 })
 
 client.appInstances.onAppInstancePaidPlanChanged(async (event) => {
@@ -428,7 +448,6 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
 client.appInstances.onAppInstanceRemoved(async (event) => {
   console.log(event, event);  
 })
-
 
 app.post('/payments', express.raw({ type: 'application/json' }), async (request, response) => {
   const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
@@ -980,6 +999,24 @@ app.get("/lost-pet", async (req, res) => {
   }
 });
 
+app.get("/found-pet", async (req, res) => {
+
+  try {
+    const {id}= req.query
+    const pets = await foundPets(id);
+
+    if (pets && pets.ArrayOfXmlNode && pets.ArrayOfXmlNode.XmlNode) {
+      res.status(200).json(pets.ArrayOfXmlNode.XmlNode); // Return only the array
+    } else {
+      res.status(404).json({ msg: "No pets found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error fetching lost pets",
+    });
+  }
+});
+
 
 app.get("/lost-pet-single", async (req, res) => {
 
@@ -996,6 +1033,35 @@ app.get("/lost-pet-single", async (req, res) => {
   }
 });
 
+
+const foundPets = async (id) => {
+  const url = `https://ws.petango.com/webservices/wsAdoption.asmx/foundSearch?speciesID=${id}&sex=A&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&ageGroup=ALL&orderBy=Sex&searchOption=0`;
+  
+  console.log(url);
+  
+  try {
+    const response = await fetch(url, { method: "GET" });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const xmlText = await response.text();
+
+
+    const jsonResult = await xml2js.parseStringPromise(xmlText, { explicitArray: false });
+
+    const pets = jsonResult
+    console.log(pets);
+    
+    
+    return pets
+  } catch (error) {
+    console.error("Error fetching or converting pets:", error.message);
+  }
+};
+
+foundPets(0)
 
 const lostPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsAdoption.asmx/lostSearch?speciesID=${id}&sex=A&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&ageGroup=ALL&orderBy=Sex`;
