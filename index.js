@@ -179,62 +179,62 @@ const createVault = async (email, amount, quantity, name) => {
   }
 };
 
-const test = async (res, token, quantity, email, name) => {
-   try {
-    console.log("res before body creation:", res, quantity);
+// const test = async (res, token, quantity, email, name) => {
+//    try {
+//     console.log("res before body creation:", res, quantity);
    
-    const body = JSON.stringify({
-      profiles: [
-        {
-          organizationId: '8043',
-          cappUserIdHex: res?.authorizedUsers[0].userIdHex,
-          name: name
-        },
-      ],
-      lifetimeInHours: parseInt(quantity)
-    });
+//     const body = JSON.stringify({
+//       profiles: [
+//         {
+//           organizationId: '8043',
+//           cappUserIdHex: res?.authorizedUsers[0].userIdHex,
+//           name: name
+//         },
+//       ],
+//       lifetimeInHours: parseInt(quantity)
+//     });
 
-    console.log("Request Body:", body);
+//     console.log("Request Body:", body);
 
-    const header = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
+//     const header = {
+//       'Content-Type': 'application/json',
+//       'Authorization': `Bearer ${token}`,
+//     };
 
-    const response = await fetch("https://iccom.convadis.ch/api/v1/capp-profiles-vaults", {
-      method: 'POST',
-      headers: header,
-      body,
-    });
+//     const response = await fetch("https://iccom.convadis.ch/api/v1/capp-profiles-vaults", {
+//       method: 'POST',
+//       headers: header,
+//       body,
+//     });
 
-    console.log("Response Status:", response.status);
+//     console.log("Response Status:", response.status);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
 
-    const result = await response.json();
-    console.log("API Result:", result)
-    result.email = email;
-    result["App link Iphone"] = "https://apps.apple.com/app/id1440728633"
-    result["App link Android"] = "https://play.google.com/store/apps/details?id=ch.convadis.carsharing&hl=en&pli=1"
-    if (result) {
-      sendEmail(email, result)
-      await fetch("https://qooad.com/_functions-dev/send", {
-        method: "POST",
-        body: JSON.stringify({
-          result,
-        })
-      })
-    } else {
-      console.log("not data to send")
-    }
+//     const result = await response.json();
+//     console.log("API Result:", result)
+//     result.email = email;
+//     result["App link Iphone"] = "https://apps.apple.com/app/id1440728633"
+//     result["App link Android"] = "https://play.google.com/store/apps/details?id=ch.convadis.carsharing&hl=en&pli=1"
+//     if (result) {
+//       sendEmail(email, result)
+//       await fetch("https://qooad.com/_functions-dev/send", {
+//         method: "POST",
+//         body: JSON.stringify({
+//           result,
+//         })
+//       })
+//     } else {
+//       console.log("not data to send")
+//     }
     
-    return result;
-  } catch (error) {
-    console.error("Error in createVault:", error);
-  }
-}
+//     return result;
+//   } catch (error) {
+//     console.error("Error in createVault:", error);
+//   }
+// }
 
 // async function sendEmail(recipientEmail, objectData) {
 //   try {
@@ -377,6 +377,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
         }
       }
     }
+
+    console.log({options});
+    
 
     await saveDataItem(options)
 
