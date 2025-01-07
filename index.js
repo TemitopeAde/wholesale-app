@@ -227,7 +227,7 @@ const test = async (res, token, quantity, email, name) => {
         })
       })
     } else {
-      console.log("not data to send"); 
+      console.log("not data to send")
     }
     
     return result;
@@ -236,79 +236,79 @@ const test = async (res, token, quantity, email, name) => {
   }
 }
 
-async function sendEmail(recipientEmail, objectData) {
-  try {
-      // Create transporter using Gmail SMTP
-      const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: "helendeveloperhub@gmail.com",
-            pass: "dbsn grmp qtys gsgd"
-          }
-      });
+// async function sendEmail(recipientEmail, objectData) {
+//   try {
+//       // Create transporter using Gmail SMTP
+//       const transporter = nodemailer.createTransport({
+//           service: 'gmail',
+//           auth: {
+//             user: "helendeveloperhub@gmail.com",
+//             pass: "dbsn grmp qtys gsgd"
+//           }
+//       });
 
-      // Convert objectData to a formatted JSON string
-      const htmlTableRows = Object.entries(objectData)
-    .map(([key, value]) => {
-        if (Array.isArray(value)) {
-            // Handle array values
-            const arrayItems = value
-                .map(
-                    (item) =>
-                        `<tr><td colspan="2" style="padding-left: 20px;">${JSON.stringify(item, null, 2)
-                            .replace(/\n/g, '<br>')
-                            .replace(/\s/g, '&nbsp;')}</td></tr>`
-                )
-                .join('');
-            return `<tr><td>${key}</td><td><table>${arrayItems}</table></td></tr>`;
-        } else if (typeof value === 'object' && value !== null) {
-            // Handle nested objects
-            const nestedRows = Object.entries(value)
-                .map(
-                    ([nestedKey, nestedValue]) =>
-                        `<tr><td style="padding-left: 20px;">${nestedKey}</td><td>${nestedValue}</td></tr>`
-                )
-                .join('');
-            return `<tr><td>${key}</td><td><table>${nestedRows}</table></td></tr>`;
-        } else {
-            // Handle primitive values
-            return `<tr><td>${key}</td><td>${value}</td></tr>`;
-        }
-    })
-    .join('');
+//       // Convert objectData to a formatted JSON string
+//       const htmlTableRows = Object.entries(objectData)
+//     .map(([key, value]) => {
+//         if (Array.isArray(value)) {
+//             // Handle array values
+//             const arrayItems = value
+//                 .map(
+//                     (item) =>
+//                         `<tr><td colspan="2" style="padding-left: 20px;">${JSON.stringify(item, null, 2)
+//                             .replace(/\n/g, '<br>')
+//                             .replace(/\s/g, '&nbsp;')}</td></tr>`
+//                 )
+//                 .join('');
+//             return `<tr><td>${key}</td><td><table>${arrayItems}</table></td></tr>`;
+//         } else if (typeof value === 'object' && value !== null) {
+//             // Handle nested objects
+//             const nestedRows = Object.entries(value)
+//                 .map(
+//                     ([nestedKey, nestedValue]) =>
+//                         `<tr><td style="padding-left: 20px;">${nestedKey}</td><td>${nestedValue}</td></tr>`
+//                 )
+//                 .join('');
+//             return `<tr><td>${key}</td><td><table>${nestedRows}</table></td></tr>`;
+//         } else {
+//             // Handle primitive values
+//             return `<tr><td>${key}</td><td>${value}</td></tr>`;
+//         }
+//     })
+//     .join('');
 
-const htmlBody = `
-    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-        <thead>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${htmlTableRows}
-        </tbody>
-    </table>
-`;
+// const htmlBody = `
+//     <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+//         <thead>
+//             <tr>
+//                 <th>Key</th>
+//                 <th>Value</th>
+//             </tr>
+//         </thead>
+//         <tbody>
+//             ${htmlTableRows}
+//         </tbody>
+//     </table>
+// `;
 
 
-      // Email options
-      const mailOptions = {
-          from: 'helendeveloperhub@gmail.com', 
-          to: recipientEmail, 
-          subject: "A new email", 
-          html: htmlBody,
-      };
+//       // Email options
+//       const mailOptions = {
+//           from: 'helendeveloperhub@gmail.com', 
+//           to: recipientEmail, 
+//           subject: "A new email", 
+//           html: htmlBody,
+//       };
 
-      // Send email
-      const emailResponse = await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully!');
-      return emailResponse
-  } catch (error) {
-      console.error('Error sending email:', error);
-      throw new Error('Failed to send email');
-  }
-}
+//       // Send email
+//       const emailResponse = await transporter.sendMail(mailOptions);
+//       console.log('Email sent successfully!');
+//       return emailResponse
+//   } catch (error) {
+//       console.error('Error sending email:', error.message);
+//       throw new Error('Failed to send email');
+//   }
+// }
 
 const client = createClient({
   auth: AppStrategy({
