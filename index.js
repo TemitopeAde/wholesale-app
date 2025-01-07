@@ -339,6 +339,18 @@ const mapObjectToRow = (data) => {
   ];
 };
 
+function generateUniqueCode() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let uniqueCode = '';
+  
+  for (let i = 0; i < 32; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    uniqueCode += characters[randomIndex];
+  }
+
+  return uniqueCode;
+}
+
 client.appInstances.onAppInstanceInstalled(async (event) => {
   console.log(event);
   let status = {}
@@ -362,12 +374,14 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
     const accessToken = response.data.access_token; 
 
+    const id = generateUniqueCode()
+
     const options = {
       dataCollectionId: "Accesscodes",
       dataItem: {
-        _id: "one-123",
+        _id: id,
         data: {
-          _id: "one-123",
+          _id: id,
           ...response.data
         }
       }
