@@ -38,7 +38,7 @@ const handleWebhook = async (req, res) => {
     await client.webhooks.process(req.body);
   } catch (err) {
     console.error(err);
-    response
+    res
       .status(500)
       .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
     return;
