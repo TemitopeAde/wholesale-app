@@ -11,6 +11,7 @@ const stripe = require('stripe')(`${process.env.STRIPE_KEY}`)
 const nodemailer = require("nodemailer")
 const xml2js = require('xml2js');
 const crypto =  require("crypto");
+const appRouter = require("./routes/app.js")
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -31,8 +32,6 @@ const APP_ID = "58199573-6f93-4db3-8145-fd7ee8f9349c";
 const app = express();
 const port = 5000;
 const cors = require("cors");
-const { access } = require('fs');
-
 
 
 async function saveDataItem(options) {
@@ -52,9 +51,6 @@ async function saveDataItem(options) {
     console.error('Failed to save item:', error);
   }
 }
-
-// saveDataItem();
-
 
 async function fetchToken() {
   const url = 'https://iccom.convadis.ch/api/v1/oauth2/token?grant_type=client_credentials';
@@ -567,6 +563,8 @@ app.get("/get-pets", async (req, res) => {
   }
 });
 
+app.use("/wix", appRouter)
+
 app.use((req, res, next) => {
   const encoding = req.headers['content-encoding'];
   
@@ -701,21 +699,38 @@ app.get('/api/part', async (req, res) => {
   }
 });
 
-app.post("/webhook", express.text(), async (request, response) => {
-  try {
-    console.log(request.body);
-    
-    const res = await client.webhooks.process(request.body); 
-  } catch (err) {
-    console.log(err, "err")
-    response
-      .status(500)
-      .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
-    return;
-  }
+app.post('/webhook', express.text(), async (req, res) => {
+  const jwt = req.body;
 
-  response.status(200).send();
+  try {
+    const { payload } = await jwtVerify(jwt, WIX_PUBLIC_KEY, {
+      algorithms: ['RS256'],
+    });
+
+    console.log('Webhook payload:', payload);
+
+    res.status(200).send();
+  } catch (err) {
+    console.error('Webhook verification failed:', err);
+    res.status(400).send('Invalid webhook signature');
+  }
 });
+
+// app.post("/webhook", express.text(), async (request, response) => {
+//   try {
+//     console.log(request.body);
+    
+//     const res = await client.webhooks.process(request.body); 
+//   } catch (err) {
+//     console.log(err, "err")
+//     response
+//       .status(500)
+//       .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
+//     return;
+//   }
+
+//   response.status(200).send();
+// });
 
 const refreshAccessToken = async () => {
   try {
