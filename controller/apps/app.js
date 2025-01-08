@@ -44,7 +44,7 @@ const handleWebhook = async (req, res) => {
     return;
   }
 
-  response.status(200).send();
+  res.status(200).send();
 };
 
 module.exports = { handleWebhook };
