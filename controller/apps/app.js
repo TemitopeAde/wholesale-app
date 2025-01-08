@@ -1,7 +1,6 @@
 const { createClient, AppStrategy } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
 
-
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApBescsmw4DUGR0Tz5oKA
 C5coDQeypqYyBbjOToJsirk7OHhTV0p/0rcwhTQyYtZvfljGVryHKGuuDAL2h3hf
@@ -29,14 +28,23 @@ client.appInstances.onAppInstanceRemoved(event => {
   //
 });
 
+client.appInstances.onAppInstanceInstalled((event) => {
+    console.log(event);
+    
+})
+
 const handleWebhook = async (req, res) => {
   try {
-    console.log(req.body);
-    res.status(200).send();
+    await client.webhooks.process(req.body);
   } catch (err) {
-    console.error("Error handling webhook:", err);
-    res.status(500).send("Internal server error");
+    console.error(err);
+    response
+      .status(500)
+      .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
+    return;
   }
+
+  response.status(200).send();
 };
 
 module.exports = { handleWebhook };
