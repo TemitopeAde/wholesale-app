@@ -10,7 +10,6 @@ z+cjOqR+hUr23BcHqBoFJRmeSYV+AuEjK3FqLdbBJ90kY1WyDWHixpcoJdKX7bYA
 CV/3iiNDmZBNhYZY5zMpimr9V0FWN4LDNMAuzZ9BYvTPHNYPtDesDQMw0biYc+23
 KwIDAQAB
 -----END PUBLIC KEY-----`;
-
 const APP_ID = "eee07ced-f0e7-4efd-8ad6-6db146304d47";
 
 const client = createClient({
@@ -29,6 +28,16 @@ client.appInstances.onAppInstanceRemoved(event => {
 });
 
 client.appInstances.onAppInstanceInstalled((event) => {
+    console.log(event);
+    
+})
+
+client.appInstances.onAppInstancePaidPlanPurchased((event) => {
+    console.log(event);
+    
+})
+
+client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled((event) => {
     console.log(event);
     
 })
