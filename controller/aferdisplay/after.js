@@ -39,7 +39,7 @@ client.appInstances.onAppInstancePaidPlanPurchased((event) => {
 })
 
 
-const handleWebhook = async (req, res) => {
+const handleAfter = async (req, res) => {
   try {
     await client.webhooks.process(req.body);
   } catch (err) {
@@ -53,4 +53,4 @@ const handleWebhook = async (req, res) => {
   res.status(200).send();
 };
 
-module.exports = { handleWebhook };
+module.exports = { handleAfter };
