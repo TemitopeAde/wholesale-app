@@ -6,6 +6,7 @@ const { handleAuto } = require("../controller/auto/auto.js");
 const { handleGoogle } = require("../controller/Google/google.js");
 const { handleSeo } = require("../controller/seo/seo.js");
 const { handlePersonalize } = require("../controller/personalize/app.js");
+const { handleQuotes } = require("../controller/requestQuote/app.js");
 
 const router = express.Router();
 
@@ -17,6 +18,7 @@ router.post("/auto", handleAuto)
 router.post("/google", handleGoogle)
 router.post("/seo", handleSeo)
 router.post("/personalize", handlePersonalize)
+router.post("/quotes", handleQuotes)
 
 module.exports = router 
 
