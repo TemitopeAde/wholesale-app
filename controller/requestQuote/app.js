@@ -121,9 +121,50 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 })
 
 
-client.appInstances.onAppInstancePaidPlanPurchased((event) => {
+client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
     console.log(event);
+    console.log(event);
+    let status = {}
+  
+  const appId = event.data?.appId;
+  const instanceId = event.metadata?.instanceId;
+  
+  const payload = {
+    grant_type: "client_credentials",
+    client_id: appId,
+    client_secret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914",
+    instance_id: instanceId,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
+    const accessToken = response.data.access_token; 
+
+    console.log({accessToken});
     
+
+    const instanceHeader = {
+      "Content-Type": "application/json",
+      "Authorization": `${accessToken}`
+    }
+
+    const instanceResponse = await axios.get(
+      "https://www.wixapis.com/apps/v1/instance",
+      { headers: instanceHeader } 
+    );
+
+    console.log({instanceResponse});
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+    
+
 })
 
 client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled((event) => {
