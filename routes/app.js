@@ -15,6 +15,7 @@ router.post("/after-display", handleAfter)
 router.post("/auto", handleAuto)
 router.post("/google", handleGoogle)
 router.post("/seo", handleSeo)
+router.post("/personalize")
 
 module.exports = router 
 
