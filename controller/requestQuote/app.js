@@ -120,7 +120,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   }
 })
 
-
 client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
     console.log(event);
     console.log(event);
@@ -161,10 +160,7 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
     
   } catch (error) {
     console.log(error);
-    
   }
-    
-
 })
 
 client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled((event) => {
