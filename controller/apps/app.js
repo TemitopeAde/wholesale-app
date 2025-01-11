@@ -132,7 +132,7 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
   
   const payload = {
     grant_type: "client_credentials",
-    client_id: appId,
+    client_id: APP_ID,
     client_secret: "1098ebdb-012c-4047-8708-efd964af779a",
     instance_id: instanceId,
   };
