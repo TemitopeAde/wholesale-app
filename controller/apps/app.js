@@ -127,12 +127,11 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
     console.log(event);
     let status = {}
   
-  const appId = "58199573-6f93-4db3-8145-fd7ee8f9349c"
   const instanceId = event.metadata?.instanceId;
   
   const payload = {
     grant_type: "client_credentials",
-    client_id: appId,
+    client_id: APP_ID,
     client_secret: "1098ebdb-012c-4047-8708-efd964af779a",
     instance_id: instanceId,
   };
