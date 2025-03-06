@@ -7,6 +7,7 @@ const { handleGoogle } = require("../controller/Google/google.js");
 const { handleSeo } = require("../controller/seo/seo.js");
 const { handlePersonalize } = require("../controller/personalize/app.js");
 const { handleQuotes } = require("../controller/requestQuote/app.js");
+const { handleAds } = require("../controller/ads/app.js");
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router.post("/google", handleGoogle)
 router.post("/seo", handleSeo)
 router.post("/personalize", handlePersonalize)
 router.post("/quotes", handleQuotes)
+router.post("/ads-display", handleAds)
 
 module.exports = router 
 
