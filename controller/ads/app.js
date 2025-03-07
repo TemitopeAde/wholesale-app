@@ -41,7 +41,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
   const payload = {
     grant_type: "client_credentials",
-    client_id: appId,
+    client_id: "a6479790-e6c2-4193-a839-aa69e4020d8f",
     client_secret: "b9b6b6c7-95ae-420b-8e86-daa7ca245426",
     instance_id: instanceId,
   };
