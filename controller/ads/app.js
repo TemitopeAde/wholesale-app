@@ -90,7 +90,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
 
     const body = {
-      email,
+      email: "devsusan24@gmail.com",
       app,
       site,
       siteId,
