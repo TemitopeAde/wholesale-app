@@ -187,6 +187,9 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
         siteId,
       };
 
+      console.log({body});
+      
+
       if (isFree===false) {
         body.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
         body.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
