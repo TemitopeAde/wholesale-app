@@ -87,6 +87,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const app = instanceResponse?.data?.instance?.appName;
     const site = instanceResponse?.data?.site?.url;
     const siteId = instanceResponse?.data?.site?.siteId;
+    const instanceId = instanceResponse.data?.instance?.instanceId;
     const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
     const appId = APP_ID
 
@@ -96,6 +97,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       appId,
       site,
       siteId,
+      instanceId,
       ...(!isFree && {
         timeStamp: status.timeStamp,
         expirationDate: status.expirationDate,
