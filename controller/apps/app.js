@@ -178,10 +178,11 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
       const site = instanceResponse?.data?.site?.url
       const siteId = instanceResponse?.data?.site?.siteId
       const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
-
+      const appId = APP_ID
       const body = {
         email: email ? email : "", 
         app, 
+        appId,
         site, 
         siteId,
       };
