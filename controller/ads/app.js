@@ -27,14 +27,15 @@ client.appInstances.onAppInstanceRemoved((event) => {
 });
 
 client.appInstances.onAppInstanceInstalled(async (event) => {
-  console.log(event);
+  console.log("Received installation event:", event);
+
   let status = {};
 
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
 
   if (!appId || !instanceId) {
-    console.error("Missing appId or instanceId in event data");
+    console.error("Missing appId or instanceId in event data.");
     return;
   }
 
@@ -45,11 +46,14 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     instance_id: instanceId,
   };
 
+  console.log({payload});
+  
+
   const headers = { "Content-Type": "application/json" };
 
   try {
     const tokenResponse = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers });
-
+    
     if (!tokenResponse.data?.access_token) {
       throw new Error("Failed to obtain access token");
     }
@@ -61,6 +65,10 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       Authorization: `Bearer ${accessToken}`,
     };
 
+    console.log({instanceHeader});
+    
+
+    // Fetch instance details
     const instanceResponse = await axios.get("https://www.wixapis.com/apps/v1/instance", { headers: instanceHeader });
 
     const isFree = instanceResponse?.data?.instance?.isFree;
@@ -72,7 +80,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       autoRenewing: isFree ? false : instanceResponse?.data?.instance?.billing?.autoRenewing,
     };
 
-    console.log(status);
+    console.log("Instance status:", status);
 
     // Prepare data for webhook notification
     const email = instanceResponse?.data?.site?.ownerEmail || "";
@@ -94,14 +102,19 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       }),
     };
 
-    // Send data using Axios instead of fetch
-    const emailResponse = await axios.post(endpoint, body, { headers });
-
-    console.log("Email sent successfully:", emailResponse.data);
+    try {
+      const emailResponse = await axios.post(endpoint, body, { headers });
+      console.log({emailResponse});
+      
+      console.log("Email sent successfully:", emailResponse.data);
+    } catch (emailError) {
+      console.error("Error sending email:", emailError.response?.data || emailError.message);
+    }
   } catch (error) {
-    console.error("Error handling app installation event:", error.message);
+    console.error("Error handling app installation event:", error.response?.data || error.message);
   }
 });
+
 
 client.appInstances.onAppInstancePaidPlanPurchased((event) => {
   console.log(event);
