@@ -102,6 +102,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       }),
     };
 
+    console.log({body});
+    
+
     try {
       const emailResponse = await axios.post(endpoint, body, { headers });
       console.log({emailResponse});
