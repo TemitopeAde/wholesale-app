@@ -2,7 +2,6 @@ const { createClient, AppStrategy } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
 const { default: axios } = require("axios");
 
-
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvlgpAKMy0dZpbbo8fpoa
 XADWARngcVrQoZC0pjgvCbBhjAlNWjcTyNoBRhBNsA1p8hEzN8JYDNEjPRh3TYpG
@@ -15,27 +14,30 @@ MwIDAQAB
 const APP_ID = "a6479790-e6c2-4193-a839-aa69e4020d8f";
 
 const client = createClient({
-  auth: AppStrategy({
+  auth: new AppStrategy({
     appId: APP_ID,
-    publicKey: PUBLIC_KEY
+    publicKey: PUBLIC_KEY,
   }),
-  modules: { appInstances }
+  modules: { appInstances },
 });
 
-client.appInstances.onAppInstanceRemoved(event => {
+client.appInstances.onAppInstanceRemoved((event) => {
   console.log(`onAppInstanceRemoved invoked with data:`, event);
-  //
-  // handle your event here
-  //
+  // Handle your event here
 });
 
 client.appInstances.onAppInstanceInstalled(async (event) => {
   console.log(event);
-  let status = {}
-  
+  let status = {};
+
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
-  
+
+  if (!appId || !instanceId) {
+    console.error("Missing appId or instanceId in event data");
+    return;
+  }
+
   const payload = {
     grant_type: "client_credentials",
     client_id: appId,
@@ -43,105 +45,78 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     instance_id: instanceId,
   };
 
-  const headers = {
-    "Content-Type": "application/json",
-  };
+  const headers = { "Content-Type": "application/json" };
 
   try {
-    const response = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers: headers });
-    const accessToken = response.data.access_token; 
+    const tokenResponse = await axios.post("https://www.wixapis.com/oauth2/token", payload, { headers });
+
+    if (!tokenResponse.data?.access_token) {
+      throw new Error("Failed to obtain access token");
+    }
+
+    const accessToken = tokenResponse.data.access_token;
 
     const instanceHeader = {
       "Content-Type": "application/json",
-      "Authorization": `${accessToken}`
-    }
+      Authorization: `Bearer ${accessToken}`,
+    };
 
-    const instanceResponse = await axios.get(
-      "https://www.wixapis.com/apps/v1/instance",
-      { headers: instanceHeader } 
-    );
+    const instanceResponse = await axios.get("https://www.wixapis.com/apps/v1/instance", { headers: instanceHeader });
 
     const isFree = instanceResponse?.data?.instance?.isFree;
 
-    if (isFree === false) {
-      status.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
-      status.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
-      status.active = true;
-      status.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
-    } else {
-      status.timeStamp = null
-      status.expirationDate = null;
-      status.active = false;
-      status.autoRenewing = false;
-    }
+    status = {
+      timeStamp: isFree ? null : instanceResponse?.data?.instance?.billing?.timeStamp,
+      expirationDate: isFree ? null : instanceResponse?.data?.instance?.billing?.expirationDate,
+      active: !isFree,
+      autoRenewing: isFree ? false : instanceResponse?.data?.instance?.billing?.autoRenewing,
+    };
 
     console.log(status);
-    
-    
-    try {
-      const email = instanceResponse?.data?.site?.ownerEmail
-      const app = instanceResponse?.data?.instance?.appName
-      const site = instanceResponse?.data?.site?.url
-      const siteId = instanceResponse?.data?.site?.siteId
-      const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
 
-      const body = {
-        email: email ? email : "", 
-        app, 
-        site, 
-        siteId,
-      };
+    // Prepare data for webhook notification
+    const email = instanceResponse?.data?.site?.ownerEmail || "";
+    const app = instanceResponse?.data?.instance?.appName;
+    const site = instanceResponse?.data?.site?.url;
+    const siteId = instanceResponse?.data?.site?.siteId;
+    const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
 
-      if (isFree===false) {
-        body.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
-        body.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
-        body.active = true;
-        body.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
-      }
+    const body = {
+      email,
+      app,
+      site,
+      siteId,
+      ...(!isFree && {
+        timeStamp: status.timeStamp,
+        expirationDate: status.expirationDate,
+        active: status.active,
+        autoRenewing: status.autoRenewing,
+      }),
+    };
 
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Failed to send email: ${response}`);
-      }
-  
-      const data = await response.json();
-      console.log("Email sent successfully:", data);
-    } catch (error) {
-      console.error("Error sending email:", error.message);
-    }
-  
-  
+    // Send data using Axios instead of fetch
+    const emailResponse = await axios.post(endpoint, body, { headers });
+
+    console.log("Email sent successfully:", emailResponse.data);
   } catch (error) {
-    console.log(error);
+    console.error("Error handling app installation event:", error.message);
   }
-})
-
+});
 
 client.appInstances.onAppInstancePaidPlanPurchased((event) => {
-    console.log(event);
-    
-})
+  console.log(event);
+});
 
 client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled((event) => {
-    console.log(event);
-    
-})
+  console.log(event);
+});
 
 const handleAds = async (req, res) => {
   try {
     await client.webhooks.process(req.body);
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .send(`Webhook error: ${err instanceof Error ? err.message : err}`);
+    res.status(500).send(`Webhook error: ${err instanceof Error ? err.message : err}`);
     return;
   }
 
