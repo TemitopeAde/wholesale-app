@@ -12,6 +12,8 @@ const nodemailer = require("nodemailer")
 const xml2js = require('xml2js');
 const crypto =  require("crypto");
 const appRouter = require("./routes/app.js")
+const emailRoutes = require("./routes/email.js")
+
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -564,6 +566,8 @@ app.get("/get-pets", async (req, res) => {
 });
 
 app.use("/wix", appRouter)
+
+app.use('/api', emailRoutes);
 
 app.use((req, res, next) => {
   const encoding = req.headers['content-encoding'];
@@ -1130,7 +1134,6 @@ const foundPets = async (id) => {
   }
 };
 
-// foundPets(0)
 
 const lostPets = async (id) => {
   const url = `https://ws.petango.com/webservices/wsAdoption.asmx/lostSearch?speciesID=${id}&sex=A&authkey=l1o3j07o9bg06o13187crf5pp07whaeh248hbehat940196t2o&ageGroup=ALL&orderBy=Sex`;
