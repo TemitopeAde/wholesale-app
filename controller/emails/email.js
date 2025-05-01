@@ -74,7 +74,6 @@ const sendProtonEmail = async (req, res) => {
       });
     });
 
-    // Construct mail options
     const emailPayload = {
       to: email,
       subject: subject,
