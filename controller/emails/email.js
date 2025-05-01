@@ -33,11 +33,14 @@ const sendEmail = async (recipient, subject, data) => {
 const sendProtonEmail = async (req, res) => {
   try {
     const { email, subject, data } = req.body;
-    await sendEmail(email, subject, data);
+    console.log({data});
+    
+    // await sendEmail(email, subject, data);
     
     return res.status(200).json({
       success: true
     });
+
   } catch (err) {
     console.error('Unexpected error:', err);
     return res.status(400).json({
