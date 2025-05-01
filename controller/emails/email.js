@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const pdf = require('html-pdf-node');
+const generatePdfBuffer = require('../../utils/app');
 require('dotenv').config();
 
 
@@ -56,48 +57,39 @@ const sendProtonEmail = async (req, res) => {
   try {
     const { email, subject, data } = req.body;
 
-    if (!email || !subject || !data) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing email, subject, or emailTemplate'
-      });
-    }
+    const pdfBuffer = await generatePdfBuffer(data.emailTemplate);
 
-    // Convert HTML to PDF
-    const file = { content: data}; // HTML string
-    const options = { format: 'A4' };
-
-    const pdfBuffer = await new Promise((resolve, reject) => {
-      pdf.generatePdf(file, options, (err, buffer) => {
-        if (err) reject(err);
-        else resolve(buffer);
-      });
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.protonmail.ch',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.PROTON_USER,
+        pass: process.env.PROTON_PASSWORD,
+      },
     });
 
-    const emailPayload = {
+    const mailOptions = {
+      from: process.env.PROTON_USER,
       to: email,
       subject: subject,
-      html: data,
+      html: data.emailTemplate,
       attachments: [
         {
           filename: 'quote.pdf',
           content: pdfBuffer,
-          contentType: 'application/pdf'
-        }
-      ]
+          contentType: 'application/pdf',
+        },
+      ],
     };
 
-    // Send the email
-    await sendEmail(emailPayload);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`Email sent: ${info.messageId}`);
 
     return res.status(200).json({ success: true });
-
   } catch (err) {
     console.error('Unexpected error:', err);
-    return res.status(400).json({
-      success: false,
-      error: 'Bad request'
-    });
+    return res.status(500).json({ success: false, error: 'Email sending failed' });
   }
 };
 
