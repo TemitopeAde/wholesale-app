@@ -13,3 +13,8 @@ const generatePdfBuffer = async (htmlContent) => {
   await browser.close();
   return pdfBuffer;
 };
+
+
+module.exports = generatePdfBuffer;
+
+
