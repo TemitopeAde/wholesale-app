@@ -1,16 +1,12 @@
 // utils/pdf.js
 const chromium = require('chrome-aws-lambda');
 const puppeteer = require('puppeteer-core');
-const isLocal = process.env.NODE_ENV !== 'production';
 
 const generatePdfBuffer = async (htmlContent) => {
   const browser = await puppeteer.launch({
-    args: isLocal ? [] : chromium.args,
-    defaultViewport: isLocal ? null : chromium.defaultViewport,
-    executablePath: isLocal
-      ? require('puppeteer').executablePath()
-      : await chromium.executablePath,
-    headless: true,
+    args: chromium.args,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
   });
 
   const page = await browser.newPage();
