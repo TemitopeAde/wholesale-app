@@ -1,5 +1,6 @@
 const { createClient, AppStrategy } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
+const { default: axios } = require("axios");
 
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhY3Ls4dI9I+97QT9kT6i
