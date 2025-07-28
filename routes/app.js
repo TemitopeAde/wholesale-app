@@ -25,7 +25,7 @@ router.post("/quotes", handleQuotes)
 router.post("/ads-display", handleAds)
 
 router.post("/rrs-webhook", handleRRS)
-router.post("auction-webhook", handleAuction)
+router.post("/auction-webhook", handleAuction)
 module.exports = router 
 
 // https://wholesale-app.vercel.app/
