@@ -9,6 +9,7 @@ const { handlePersonalize } = require("../controller/personalize/app.js");
 const { handleQuotes } = require("../controller/requestQuote/app.js");
 const { handleAds } = require("../controller/ads/app.js");
 const { handleRRS } = require("../controller/Rrs/app.js");
+const { handleAuction } = require("../controller/Auction/app.js");
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.post("/quotes", handleQuotes)
 router.post("/ads-display", handleAds)
 
 router.post("/rrs-webhook", handleRRS)
-
+router.post("auction-webhook", handleAuction)
 module.exports = router 
 
 // https://wholesale-app.vercel.app/
