@@ -8,6 +8,7 @@ const { handleSeo } = require("../controller/seo/seo.js");
 const { handlePersonalize } = require("../controller/personalize/app.js");
 const { handleQuotes } = require("../controller/requestQuote/app.js");
 const { handleAds } = require("../controller/ads/app.js");
+const { handleRRS } = require("../controller/Rrs/app.js");
 
 const router = express.Router();
 
@@ -21,6 +22,8 @@ router.post("/seo", handleSeo)
 router.post("/personalize", handlePersonalize)
 router.post("/quotes", handleQuotes)
 router.post("/ads-display", handleAds)
+
+router.post("/rrs-webhook", handleRRS)
 
 module.exports = router 
 

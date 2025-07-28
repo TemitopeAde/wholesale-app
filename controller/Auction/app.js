@@ -2,15 +2,15 @@ const { createClient, AppStrategy } = require("@wix/sdk");
 const { appInstances } = require("@wix/app-management");
 
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApBescsmw4DUGR0Tz5oKA
-C5coDQeypqYyBbjOToJsirk7OHhTV0p/0rcwhTQyYtZvfljGVryHKGuuDAL2h3hf
-ULDXPGI4uW/l1rUzHlrmqyoAtdZR9oAYAabFo3Kutzq7QG41NmaSRX6tlubOqgXF
-pRq1Rlxs/GvKqnd6VHDQWWuEweIVaawv3xPG3MDCMmFOyZSs0r+HOPq5ZkDkIvqv
-SzStiisd6dhwUcHMSpcVNn0wwCw7dNyDg1q4aX8mFze16NC0jhVSm3e09cGHb4oW
-z2JOoed5UPGH8TF8SzQGLwMevgAQ7pD2BZcPfT24vF6/PcWRtQKb4JxzPTUs0zMG
-dwIDAQAB
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoqrIVqzK32w96s59yENm
+P888a9IC51jmtT6gHBSDlRLW7sj3lG+5ApFwWufM6xY4mhjwYO+9Lcod3W2VixjI
+tkIFYDmrliUa29JeZ/D9rR6LIj72xrkWlkbtM/R+e8ZDdWUGIMvKF5hmIKDlfIYt
+p+KMGxjGta0eOJaMUuYuFH5yjIndmrgNdxJMP5tHbqmnhI6PZwtAogyE/v1Zbm85
+bn99Tl1z3V0pnndYMaxJaN6C/hu6VQZ6UQUfeKzpVNxY9WkR/QxHHDfK/UfqJXCn
+bXYDeXEY2amn02+PPqoSmORD0qrPVP8HgRKmjyftLXJhry2HdQDmxo2fpZzEAEC0
+7wIDAQAB
 -----END PUBLIC KEY-----`;
-const APP_ID = "4a388e84-5edb-4412-a263-0275d898ed9a";
+const APP_ID = "e86a6c1f-ad54-4b12-acee-9ba1711d83a0";
 
 const client = createClient({
     auth: AppStrategy({
@@ -37,7 +37,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const payload = {
         grant_type: "client_credentials",
         client_id: appId,
-        client_secret: "1098ebdb-012c-4047-8708-efd964af779a",
+        client_secret: "cfd30fbd-f759-4720-8304-706f75c44d28",
         instance_id: instanceId,
     };
 
@@ -133,7 +133,7 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled((event) => {
 
 })
 
-const handleJob = async (req, res) => {
+const handleAuction = async (req, res) => {
     try {
         await client.webhooks.process(req.body);
     } catch (err) {
@@ -147,4 +147,4 @@ const handleJob = async (req, res) => {
     res.status(200).send();
 };
 
-module.exports = { handleJob };
+module.exports = { handleAuction };
