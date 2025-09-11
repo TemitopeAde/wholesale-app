@@ -21,14 +21,46 @@ const client = createClient({
   modules: { appInstances }
 });
 
-client.appInstances.onAppInstanceRemoved(event => {
+// Helper function to save/update app instance data via API
+async function saveAppInstanceToAPI(instanceData) {
+  const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
+  const headers = { "Content-Type": "application/json" };
+
+  try {
+    const response = await axios.post(endpoint, instanceData, { headers });
+    console.log(`App instance data saved/updated for instanceId: ${instanceData.instanceId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error saving app instance data:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+client.appInstances.onAppInstanceRemoved(async (event) => {
   console.log(`onAppInstanceRemoved invoked with data:`, event);
   
+  const instanceId = event.metadata?.instanceId;
+  
+  if (instanceId) {
+    const removalData = {
+      instanceId: instanceId,
+      appId: APP_ID,
+      status: 'removed',
+      action: 'app_instance_removed',
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      await saveAppInstanceToAPI(removalData);
+    } catch (error) {
+      console.error('Error saving removal data:', error);
+    }
+  }
 });
 
 client.appInstances.onAppInstanceInstalled(async (event) => {
-  console.log(event);
-  let status = {}
+  console.log("Received installation event:", event);
+  let status = {};
   
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
@@ -50,8 +82,8 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
     const instanceHeader = {
       "Content-Type": "application/json",
-      "Authorization": `${accessToken}`
-    }
+      "Authorization": `Bearer ${accessToken}`
+    };
 
     const instanceResponse = await axios.get(
       "https://www.wixapis.com/apps/v1/instance",
@@ -66,7 +98,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       status.active = true;
       status.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
     } else {
-      status.timeStamp = null
+      status.timeStamp = null;
       status.expirationDate = null;
       status.active = false;
       status.autoRenewing = false;
@@ -74,60 +106,75 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
     console.log(status);
     
-    
+    // Prepare comprehensive data for API storage
+    const email = instanceResponse?.data?.site?.ownerEmail;
+    const app = instanceResponse?.data?.instance?.appName;
+    const site = instanceResponse?.data?.site?.url;
+    const siteId = instanceResponse?.data?.site?.siteId;
+
+    const apiData = {
+      // Original fields for backward compatibility
+      email: email || "",
+      app,
+      appId: APP_ID,
+      site,
+      siteId,
+      instanceId,
+      
+      // Additional fields for comprehensive tracking
+      action: 'app_instance_installed',
+      isFree: isFree,
+      status: 'installed',
+      installationTimestamp: new Date().toISOString(),
+      
+      // Include billing data for paid plans
+      ...(isFree === false && {
+        timeStamp: status.timeStamp,
+        expirationDate: status.expirationDate,
+        active: status.active,
+        autoRenewing: status.autoRenewing,
+      }),
+    };
+
+    // Save to API endpoint
     try {
-      const email = instanceResponse?.data?.site?.ownerEmail
-      const app = instanceResponse?.data?.instance?.appName
-      const site = instanceResponse?.data?.site?.url
-      const siteId = instanceResponse?.data?.site?.siteId
-      const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact"
-      const appId = APP_ID
-      const body = {
-        email: email ? email : "", 
-        app, 
-        site, 
-        siteId,
-        appId
-      };
-
-      if (isFree===false) {
-        body.timeStamp = instanceResponse?.data?.instance?.billing?.timeStamp;
-        body.expirationDate = instanceResponse?.data?.instance?.billing?.expirationDate;
-        body.active = true;
-        body.autoRenewing = instanceResponse?.data?.instance?.billing?.autoRenewing;
-      }
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Failed to send email: ${response}`);
-      }
-  
-      const data = await response.json();
-      console.log("Email sent successfully:", data);
-    } catch (error) {
-      console.error("Error sending email:", error.message);
+      await saveAppInstanceToAPI(apiData);
+      console.log("App instance data saved successfully");
+    } catch (apiError) {
+      console.error("Error saving to API:", apiError);
     }
-  
-  
+
   } catch (error) {
-    console.log(error);
+    console.error("Error handling app installation event:", error);
   }
-})
+});
 
 client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
-    console.log(event);
-    console.log(event);
-    let status = {}
+  console.log("Paid plan purchased:", event);
   
-  const appId = "58199573-6f93-4db3-8145-fd7ee8f9349c"
+  const couponName = event.data?.couponName;
+  const cycle = event.data?.cycle;
+  const expiresOn = event.data?.expiresOn;
+  const invoiceId = event.data?.invoiceId;
+  const operationTimeStamp = event.data?.operationTimeStamp;
+  const vendorProductId = event.data?.vendorProductId;
+  const eventType = event.metadata?.eventType;
+  const identity = event.metadata?.identity;
   const instanceId = event.metadata?.instanceId;
+
+  console.log("Paid plan details:", {
+    couponName,
+    cycle,
+    expiresOn,
+    invoiceId,
+    operationTimeStamp,
+    vendorProductId,
+    eventType,
+    identity,
+    instanceId
+  });
+
+  const appId = "58199573-6f93-4db3-8145-fd7ee8f9349c";
   
   const payload = {
     grant_type: "client_credentials",
@@ -145,12 +192,11 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
     const accessToken = response.data.access_token; 
 
     console.log({accessToken});
-    
 
     const instanceHeader = {
       "Content-Type": "application/json",
-      "Authorization": `${accessToken}`
-    }
+      "Authorization": `Bearer ${accessToken}`
+    };
 
     const instanceResponse = await axios.get(
       "https://www.wixapis.com/apps/v1/instance",
@@ -158,16 +204,75 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
     );
 
     console.log({instanceResponse});
+
+    const billing = instanceResponse?.data?.instance?.billing;
+    const email = instanceResponse?.data?.site?.ownerEmail;
+    const app = instanceResponse?.data?.instance?.appName;
+    const site = instanceResponse?.data?.site?.url;
+    const siteId = instanceResponse?.data?.site?.siteId;
+
+    const paidPlanData = {
+      instanceId: instanceId,
+      appId: APP_ID,
+      email: email || "",
+      app,
+      site,
+      siteId,
+      action: 'paid_plan_purchased',
+      isFree: false,
+      status: 'paid_plan_active',
+      timestamp: new Date().toISOString(),
+      timeStamp: billing?.timeStamp,
+      expirationDate: billing?.expirationDate,
+      active: true,
+      autoRenewing: billing?.autoRenewing,
+      couponName: couponName,
+      paymentCycle: cycle,
+      planExpiresOn: expiresOn,
+      invoiceId: invoiceId,
+      purchaseTimestamp: operationTimeStamp,
+      vendorProductId: vendorProductId,
+      eventType: eventType,
+      customerIdentity: identity
+    };
+
+    try {
+      await saveAppInstanceToAPI(paidPlanData);
+      console.log("Paid plan purchase data saved successfully");
+    } catch (error) {
+      console.error('Error saving paid plan purchase data:', error);
+    }
     
   } catch (error) {
-    console.log(error);
+    console.error("Error handling paid plan purchase event:", error);
   }
-})
+});
 
-client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled((event) => {
-    console.log(event);
-    
-})
+client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
+  console.log("Auto renewal cancelled:", event);
+  
+  const instanceId = event.metadata?.instanceId;
+  
+  if (instanceId) {
+    const cancellationData = {
+      instanceId: instanceId,
+      appId: APP_ID,
+      action: 'auto_renewal_cancelled',
+      autoRenewing: false,
+      status: 'auto_renewal_cancelled',
+      timestamp: new Date().toISOString(),
+      eventData: event.data
+    };
+
+    try {
+      await saveAppInstanceToAPI(cancellationData);
+      console.log("Auto renewal cancellation data saved successfully");
+    } catch (error) {
+      console.error('Error saving auto renewal cancellation data:', error);
+    }
+  }
+});
+
 
 const handleQuotes = async (req, res) => {
   try {

@@ -26,6 +26,7 @@ client.appInstances.onAppInstanceRemoved((event) => {
   // Handle your event here
 });
 
+
 client.appInstances.onAppInstanceInstalled(async (event) => {
   console.log("Received installation event:", event);
 
@@ -46,9 +47,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     instance_id: instanceId,
   };
 
-  console.log({payload});
-  
-
   const headers = { "Content-Type": "application/json" };
 
   try {
@@ -65,10 +63,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       Authorization: `Bearer ${accessToken}`,
     };
 
-    console.log({instanceHeader});
-    
-
-    // Fetch instance details
     const instanceResponse = await axios.get("https://www.wixapis.com/apps/v1/instance", { headers: instanceHeader });
 
     const isFree = instanceResponse?.data?.instance?.isFree;
@@ -79,8 +73,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       active: !isFree,
       autoRenewing: isFree ? false : instanceResponse?.data?.instance?.billing?.autoRenewing,
     };
-
-    console.log("Instance status:", status);
 
     // Prepare data for webhook notification
     const email = instanceResponse?.data?.site?.ownerEmail || "";
@@ -106,14 +98,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       }),
     };
 
-    console.log({body});
-    
-
     try {
       const emailResponse = await axios.post(endpoint, body, { headers });
-      console.log({emailResponse});
       
-      console.log("Email sent successfully:", emailResponse.data);
     } catch (emailError) {
       console.error("Error sending email:", emailError.response?.data || emailError.message);
     }
