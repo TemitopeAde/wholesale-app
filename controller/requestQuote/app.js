@@ -23,6 +23,7 @@ const client = createClient({
 
 // Helper function to save/update app instance data via API
 async function saveAppInstanceToAPI(instanceData) {
+  log("Saving app instance data to API:", instanceData);
   const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
   const headers = { "Content-Type": "application/json" };
 
