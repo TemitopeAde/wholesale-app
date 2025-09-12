@@ -35,7 +35,7 @@ async function saveAppInstanceToAPI(instanceData) {
   console.log("Saving app instance data to API:");
   console.log(JSON.stringify(instanceData, null, 2));
   
-  const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
+  const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/savedata";
   const headers = { "Content-Type": "application/json" };
   
   console.log(`API Endpoint: ${endpoint}`);
