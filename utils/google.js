@@ -91,14 +91,16 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
     
     const headerResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheet}`,
+      range: targetSheet,
     });
     
     if (!headerResponse.data.values || headerResponse.data.values.length === 0) {
-      const headers = Object.keys(dataToSave);
+      const headers = Object.keys(dataToSave).map(key => {
+        return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      });
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${targetSheet}`,
+        range: targetSheet,
         valueInputOption: 'RAW',
         resource: { values: [headers] },
       });
@@ -108,7 +110,7 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
     
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheet}`,
+      range: targetSheet,
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
       resource: { values },
@@ -121,6 +123,7 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
     throw error;
   }
 }
+
 
 async function clearSheet(sheetId) {
   try {
