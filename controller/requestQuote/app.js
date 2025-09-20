@@ -95,8 +95,6 @@ async function getInstanceDetails(accessToken) {
 client.appInstances.onAppInstanceRemoved(async (event) => {
   const instanceId = event.metadata?.instanceId;
 
-  console.log(JSON.stringify(event, null, 2));
-
   const removalData = {
     instanceId: instanceId,
     appId: APP_ID,
@@ -104,8 +102,7 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
     action: 'app_instance_removed',
     timestamp: new Date().toISOString()
   };
-  console.log("📝 Preparing removal data:", JSON.stringify(removalData, null, 2));
-
+  
   try {
 
     saveAppInstanceToAPI(removalData);
@@ -129,12 +126,11 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
 
-  console.log(JSON.stringify(event, null, 2));
-  
-
   try {
     const accessToken = await getAccessToken(appId, instanceId);
     const instanceResponse = await getInstanceDetails(accessToken);
+    console.log(JSON.stringify(instanceResponse?.data, null, 2));
+    
 
     const isFree = instanceResponse?.data?.instance?.isFree;
     if (isFree === false) {
