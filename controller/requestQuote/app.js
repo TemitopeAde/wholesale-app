@@ -129,9 +129,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   try {
     const accessToken = await getAccessToken(appId, instanceId);
     const instanceResponse = await getInstanceDetails(accessToken);
-    console.log(JSON.stringify(instanceResponse?.data, null, 2));
     
-
     const isFree = instanceResponse?.data?.instance?.isFree;
     if (isFree === false) {
 
