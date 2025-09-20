@@ -207,7 +207,8 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     console.log("💾 Saving installation data to API...");
     try {
       saveAppInstanceToAPI(apiData);
-      saveAppInstanceToGoogleSheets(apiData);
+      const res = await saveAppInstanceToGoogleSheets(apiData);
+      console.log({res, apiData});
       console.log("✅ App instance installation data saved successfully");
     } catch (apiError) {
       console.log("❌ Error saving installation data to API");
