@@ -92,32 +92,32 @@ async function getInstanceDetails(accessToken) {
   }
 }
 
-client.appInstances.onAppInstanceRemoved(async (event) => {
-  const instanceId = event.metadata?.instanceId;
+// client.appInstances.onAppInstanceRemoved(async (event) => {
+//   const instanceId = event.metadata?.instanceId;
 
-  const removalData = {
-    instanceId: instanceId,
-    appId: APP_ID,
-    status: 'removed',
-    action: 'app_instance_removed',
-    timestamp: new Date().toISOString()
-  };
+//   const removalData = {
+//     instanceId: instanceId,
+//     appId: APP_ID,
+//     status: 'removed',
+//     action: 'app_instance_removed',
+//     timestamp: new Date().toISOString()
+//   };
   
-  try {
+//   try {
 
-    saveAppInstanceToAPI(removalData);
-    removalData.sheet = userSheet.removals;
-    const res = await saveAppInstanceToGoogleSheets(removalData);
-    console.log({ res, removalData });
+//     saveAppInstanceToAPI(removalData);
+//     removalData.sheet = userSheet.removals;
+//     const res = await saveAppInstanceToGoogleSheets(removalData);
+//     console.log({ res, removalData });
 
-    console.log("✅ App instance removal processed successfully");
-  } catch (error) {
-    console.log("❌ Error processing app instance removal");
-    console.error('Detailed error:', error);
-  }
+//     console.log("✅ App instance removal processed successfully");
+//   } catch (error) {
+//     console.log("❌ Error processing app instance removal");
+//     console.error('Detailed error:', error);
+//   }
 
-  console.log("=== APP INSTANCE REMOVAL EVENT COMPLETE ===\n");
-});
+//   console.log("=== APP INSTANCE REMOVAL EVENT COMPLETE ===\n");
+// });
 
 client.appInstances.onAppInstanceInstalled(async (event) => {
 
