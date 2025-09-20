@@ -1,0 +1,45 @@
+# Node modules directory
+/node_modules/
+
+# Log files
+*.log
+
+# Environment variables
+.env
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+
+# npm cache
+.npm/
+
+# Optional npm cache directory
+npm-debug.log*
+
+# Optional eslint cache
+.eslintcache
+
+# Yarn v2/3
+.yarn/
+
+# IDE/editor directories and files
+.vscode/
+.idea/
+
+# Dependency directories
+bower_components/
+
+# Optional coverage directory
+coverage/
+
+# Custom directories or files you don't want to track
+*.pid
+*.seed
+*.sublime-workspace
+*.sublime-project
+.vercel
