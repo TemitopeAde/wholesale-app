@@ -25,29 +25,6 @@ const client = createClient({
   modules: { appInstances }
 });
 
-async function initializeGoogleSheets() {
-  try {
-    const auth = new google.auth.GoogleAuth({
-      keyFile: path.join(__dirname, 'credentials.json'), 
-      scopes: ['https://www.googleapis.com/auth/spreadsheets']
-    });
-
-    const authClient = await auth.getClient();
-    const sheets = google.sheets({ version: 'v4', auth: authClient });
-    
-    return sheets;
-  } catch (error) {
-    console.error('❌ Failed to initialize Google Sheets API:', error);
-    throw error;
-  }
-}
-
-initializeGoogleSheets().then(() => {
-  console.log('✅ Google Sheets API initialized successfully');
-}).catch(() => {
-  console.log('❌ Google Sheets API initialization failed');
-});
-
 async function saveAppInstanceToAPI(instanceData) {
   const startTime = Date.now();
   const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/savedata";
@@ -367,4 +344,4 @@ const handleQuotes = async (req, res) => {
 
 console.log("Ready to process events...\n");
 
-module.exports = { handleQuotes, initializeGoogleSheets };
+module.exports = { handleQuotes };
