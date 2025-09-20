@@ -22,12 +22,70 @@ async function initializeGoogleSheets() {
   }
 }
 
+// async function saveAppInstanceToGoogleSheets(instanceData) {
+//   try {
+//     const SPREADSHEET_ID = sheet;
+//     const RANGE = 'new users!A1';
+    
+//     const sheets = await initializeGoogleSheets();
+    
+//     let values = [];
+    
+//     if (Array.isArray(instanceData)) {
+//       values = instanceData;
+//     } else if (typeof instanceData === 'object' && instanceData !== null) {
+//       values = [Object.values(instanceData)];
+//     } else {
+//       values = [[instanceData]];
+//     }
+    
+//     const resource = {
+//       values: values,
+//     };
+    
+//     const response = await sheets.spreadsheets.values.append({
+//       spreadsheetId: SPREADSHEET_ID,
+//       range: RANGE,
+//       valueInputOption: 'RAW',
+//       insertDataOption: 'INSERT_ROWS',
+//       resource: resource,
+//     });
+    
+//     return response.data;
+    
+//   } catch (error) {
+//     console.error('Error saving to Google Sheets:', error.message);
+//     throw error;
+//   }
+// }
+
+
 async function saveAppInstanceToGoogleSheets(instanceData) {
   try {
     const SPREADSHEET_ID = sheet;
     const RANGE = 'new users!A1';
     
     const sheets = await initializeGoogleSheets();
+    
+    // Check if headers exist
+    const headerResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'new users!1:1',
+    });
+    
+    // If no headers exist, add them
+    if (!headerResponse.data.values || headerResponse.data.values.length === 0) {
+      if (typeof instanceData === 'object' && instanceData !== null && !Array.isArray(instanceData)) {
+        const headers = Object.keys(instanceData);
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: SPREADSHEET_ID,
+          range: 'new users!1:1',
+          valueInputOption: 'RAW',
+          resource: { values: [headers] },
+        });
+        console.log('Headers added to sheet:', headers);
+      }
+    }
     
     let values = [];
     
