@@ -70,7 +70,7 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
     // Check if headers exist
     const headerResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'new users!1:1',
+      range: `${instanceData?.sheet}`,
     });
     
     // If no headers exist, add them
@@ -79,7 +79,7 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
         const headers = Object.keys(instanceData);
         await sheets.spreadsheets.values.update({
           spreadsheetId: SPREADSHEET_ID,
-          range: 'new users!1:1',
+          range: `${instanceData?.sheet}`,
           valueInputOption: 'RAW',
           resource: { values: [headers] },
         });

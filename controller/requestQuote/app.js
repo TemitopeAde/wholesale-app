@@ -16,6 +16,12 @@ MQIDAQAB
 -----END PUBLIC KEY-----`;
 const APP_ID = "58199573-6f93-4db3-8145-fd7ee8f9349c";
 
+const userSheet = {
+  newUsers: "new users!A:Z",
+  newTrial: "new trial!A:Z",
+  payment: "payment!A:Z",
+  canceledPlans: "canceled plans!A:Z"
+}
 
 const client = createClient({
   auth: AppStrategy({
@@ -88,10 +94,8 @@ async function getInstanceDetails(accessToken) {
 
 client.appInstances.onAppInstanceRemoved(async (event) => {
   const instanceId = event.metadata?.instanceId;
-  
-  if (!instanceId) {
-    return;
-  }
+
+  console.log(JSON.stringify(event, null, 2));
 
   const removalData = {
     instanceId: instanceId,
@@ -103,11 +107,12 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
   console.log("📝 Preparing removal data:", JSON.stringify(removalData, null, 2));
 
   try {
-    
+
     saveAppInstanceToAPI(removalData);
+    removalData.sheet = userSheet.removals;
     const res = await saveAppInstanceToGoogleSheets(removalData);
-    console.log({res, removalData});
-    
+    console.log({ res, removalData });
+
     console.log("✅ App instance removal processed successfully");
   } catch (error) {
     console.log("❌ Error processing app instance removal");
@@ -124,16 +129,16 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
 
-  try {
-    // Get access token
-    const accessToken = await getAccessToken(appId, instanceId);
+  console.log(JSON.stringify(event, null, 2));
+  
 
-    // Get instance details
+  try {
+    const accessToken = await getAccessToken(appId, instanceId);
     const instanceResponse = await getInstanceDetails(accessToken);
 
     const isFree = instanceResponse?.data?.instance?.isFree;
     if (isFree === false) {
-      
+
       const billing = instanceResponse?.data?.instance?.billing;
       status.timeStamp = billing?.timeStamp;
       status.expirationDate = billing?.expirationDate;
@@ -147,9 +152,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       status.autoRenewing = false;
     }
 
-    console.log("Final status object:", JSON.stringify(status, null, 2));
-
-    // Extract site and app information
     const email = instanceResponse?.data?.site?.ownerEmail;
     const app = instanceResponse?.data?.instance?.appName;
     const site = instanceResponse?.data?.site?.url;
@@ -163,13 +165,11 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       siteId,
       instanceId,
 
-      // Additional fields for comprehensive tracking
       action: 'app_instance_installed',
       isFree: isFree,
       status: 'installed',
       installationTimestamp: new Date().toISOString(),
 
-      // Include billing data for paid plans
       ...(isFree === false && {
         timeStamp: status.timeStamp,
         expirationDate: status.expirationDate,
@@ -178,14 +178,10 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       }),
     };
 
-    console.log("Final API data:", JSON.stringify(apiData, null, 2));
-
-    // Save to API endpoint
-    console.log("💾 Saving installation data to API...");
+    apiData.sheet = userSheet.newUsers;
     try {
       saveAppInstanceToAPI(apiData);
       const res = await saveAppInstanceToGoogleSheets(apiData);
-      console.log({res, apiData});
       console.log("✅ App instance installation data saved successfully");
     } catch (apiError) {
       console.log("❌ Error saving installation data to API");
@@ -215,7 +211,7 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
   const identity = event.metadata?.identity;
   const instanceId = event.metadata?.instanceId;
 
-  
+
   const planDetails = {
     couponName,
     cycle,
@@ -227,16 +223,16 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
     identity,
     instanceId
   };
-  
+
 
   const appId = "58199573-6f93-4db3-8145-fd7ee8f9349c";
 
   try {
     // Get access token
     const accessToken = await getAccessToken(appId, instanceId);
-    
+
     const instanceResponse = await getInstanceDetails(accessToken);
-    
+
     const billing = instanceResponse?.data?.instance?.billing;
     const email = instanceResponse?.data?.site?.ownerEmail;
     const app = instanceResponse?.data?.instance?.appName;
@@ -269,36 +265,30 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
       customerIdentity: identity
     };
 
-   
+
     try {
       saveAppInstanceToAPI(paidPlanData);
-     
+      paidPlanData.sheet = userSheet.payment;
+      const res = await saveAppInstanceToGoogleSheets(paidPlanData);
+      console.log({ res, paidPlanData });
     } catch (error) {
-      
+
       throw error;
     }
 
   } catch (error) {
     console.log(error);
-    
+
   }
 
   console.log("=== PAID PLAN PURCHASE EVENT COMPLETE ===\n");
 });
 
 client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
- 
+
 
   const instanceId = event.metadata?.instanceId;
-  console.log(`Instance ID: ${instanceId || 'NOT FOUND'}`);
 
-  if (!instanceId) {
-    console.log("⚠️  Warning: No instanceId found in cancellation event");
-    console.log("Available metadata:", JSON.stringify(event.metadata, null, 2));
-    return;
-  }
-
-  console.log("📝 Preparing cancellation data...");
   const cancellationData = {
     instanceId: instanceId,
     appId: APP_ID,
@@ -323,8 +313,9 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
   console.log("=== AUTO RENEWAL CANCELLATION EVENT COMPLETE ===\n");
 });
 
+
 const handleQuotes = async (req, res) => {
-  
+
 
   try {
     console.log("🔄 Processing webhook with Wix client...");
