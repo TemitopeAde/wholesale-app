@@ -104,7 +104,7 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
 
   try {
     
-    await saveAppInstanceToAPI(removalData);
+    saveAppInstanceToAPI(removalData);
     const res = await saveAppInstanceToGoogleSheets(removalData);
     console.log({res, removalData});
     
