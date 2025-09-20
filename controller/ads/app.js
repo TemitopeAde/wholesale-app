@@ -84,7 +84,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const appId = APP_ID
 
     const body = {
-      email: email || "devsusan24@gmail.com",
+      email: email,
       app,
       appId,
       site,

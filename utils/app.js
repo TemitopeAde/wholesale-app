@@ -1,3 +1,4 @@
+const { default: axios } = require('axios');
 const puppeteer = require('puppeteer');
 
 const generatePdfBuffer = async (htmlContent) => {
@@ -15,9 +16,18 @@ const generatePdfBuffer = async (htmlContent) => {
 };
 
 
+async function addContacts(endpoint, body) {
+  try {
+    const headers = { "Content-Type": "application/json" };
+    const emailResponse = await axios.post(endpoint, body, { headers });
+    return emailResponse.data;
+  } catch (emailError) {
+    console.error("Error sending email:", emailError.response?.data || emailError.message);
+    throw emailError;
+  }
+}
 
 
-
-module.exports = generatePdfBuffer;
+module.exports = { generatePdfBuffer, addContacts };
 
 

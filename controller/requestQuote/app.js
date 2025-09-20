@@ -4,6 +4,7 @@ const { default: axios } = require("axios");
 const { google } = require('googleapis');
 const path = require('path');
 const { saveAppInstanceToGoogleSheets } = require("../../utils/google");
+const { addContacts } = require("../../utils/app");
 
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgDiCeyVSupN1GmiIfEvZ
@@ -19,7 +20,7 @@ const APP_ID = "58199573-6f93-4db3-8145-fd7ee8f9349c";
 const userSheet = {
   newUsers: "new users!A:Z",
   newTrial: "new trial!A:Z",
-  payment: "payment!A:Z",
+  payments: "payments!A:Z",
   canceledPlans: "canceled plans!A:Z"
 }
 
@@ -92,7 +93,6 @@ async function getInstanceDetails(accessToken) {
   }
 }
 
-
 client.appInstances.onAppInstanceInstalled(async (event) => {
 
   let status = {};
@@ -103,7 +103,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   try {
     const accessToken = await getAccessToken(appId, instanceId);
     const instanceResponse = await getInstanceDetails(accessToken);
-    
+
     const isFree = instanceResponse?.data?.instance?.isFree;
     if (isFree === false) {
 
@@ -146,7 +146,15 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       }),
     };
 
-    apiData.sheet = userSheet.newTrial;
+
+    const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
+    try {
+      addContacts(endpoint, apiData);
+    } catch (emailError) {
+      console.error("Error sending contact data:", emailError);
+    }
+
+    apiData.sheet = userSheet.newUsers;
     try {
       saveAppInstanceToAPI(apiData);
       const res = await saveAppInstanceToGoogleSheets(apiData);
@@ -179,25 +187,8 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
   const identity = event.metadata?.identity;
   const instanceId = event.metadata?.instanceId;
 
-
-  const planDetails = {
-    couponName,
-    cycle,
-    expiresOn,
-    invoiceId,
-    operationTimeStamp,
-    vendorProductId,
-    eventType,
-    identity,
-    instanceId
-  };
-
-
-  const appId = "58199573-6f93-4db3-8145-fd7ee8f9349c";
-
   try {
-    // Get access token
-    const accessToken = await getAccessToken(appId, instanceId);
+    const accessToken = await getAccessToken(APP_ID, instanceId);
 
     const instanceResponse = await getInstanceDetails(accessToken);
 
@@ -236,7 +227,7 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
 
     try {
       saveAppInstanceToAPI(paidPlanData);
-      paidPlanData.sheet = userSheet.payment;
+      paidPlanData.sheet = userSheet.payments;
       const res = await saveAppInstanceToGoogleSheets(paidPlanData);
       console.log({ res, paidPlanData });
     } catch (error) {
@@ -254,7 +245,6 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
 
 client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
 
-
   const instanceId = event.metadata?.instanceId;
 
   const cancellationData = {
@@ -267,20 +257,18 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
     eventData: event.data
   };
 
-  console.log("Cancellation data prepared:", JSON.stringify(cancellationData, null, 2));
-
   try {
     console.log("💾 Saving auto renewal cancellation data...");
+    cancellationData.sheet = userSheet.canceledPlans;
     saveAppInstanceToAPI(cancellationData);
-    console.log("✅ Auto renewal cancellation data saved successfully");
+    const res = await saveAppInstanceToGoogleSheets(cancellationData);
+    console.log({ res, cancellationData });
   } catch (error) {
-    console.log("❌ Error saving auto renewal cancellation data");
     console.error('Cancellation save error:', error);
   }
 
   console.log("=== AUTO RENEWAL CANCELLATION EVENT COMPLETE ===\n");
 });
-
 
 const handleQuotes = async (req, res) => {
 
