@@ -91,14 +91,14 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
     
     const headerResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheet}!1:1`,
+      range: `${targetSheet}`,
     });
     
     if (!headerResponse.data.values || headerResponse.data.values.length === 0) {
       const headers = Object.keys(dataToSave);
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${targetSheet}!1:1`,
+        range: `${targetSheet}`,
         valueInputOption: 'RAW',
         resource: { values: [headers] },
       });
@@ -108,7 +108,7 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
     
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheet}!A1`,
+      range: `${targetSheet}`,
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
       resource: { values },
