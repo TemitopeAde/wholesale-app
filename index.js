@@ -450,8 +450,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
   }
 })
 
-
-
 client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
   
 })
