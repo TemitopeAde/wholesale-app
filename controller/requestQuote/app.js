@@ -100,12 +100,12 @@ client.appInstances.onAppInstanceRemoved(async (event) => {
     action: 'app_instance_removed',
     timestamp: new Date().toISOString()
   };
-
+  console.log("📝 Preparing removal data:", JSON.stringify(removalData, null, 2));
 
   try {
     
-    saveAppInstanceToAPI(removalData);
-    const res = saveAppInstanceToGoogleSheets(removalData);
+    await saveAppInstanceToAPI(removalData);
+    const res = await saveAppInstanceToGoogleSheets(removalData);
     console.log({res, removalData});
     
     console.log("✅ App instance removal processed successfully");
