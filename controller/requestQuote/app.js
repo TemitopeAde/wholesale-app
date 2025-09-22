@@ -156,7 +156,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
     apiData.sheet = userSheet.newUsers;
     try {
-      saveAppInstanceToAPI(apiData);
+      await saveAppInstanceToAPI(apiData);
       const res = await saveAppInstanceToGoogleSheets(apiData);
       console.log("✅ App instance installation data saved successfully");
     } catch (apiError) {
@@ -226,7 +226,7 @@ client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
 
 
     try {
-      saveAppInstanceToAPI(paidPlanData);
+      await saveAppInstanceToAPI(paidPlanData);
       paidPlanData.sheet = userSheet.payments;
       const res = await saveAppInstanceToGoogleSheets(paidPlanData);
       console.log({ res, paidPlanData });
@@ -260,7 +260,7 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
   try {
     console.log("💾 Saving auto renewal cancellation data...");
     cancellationData.sheet = userSheet.canceledPlans;
-    saveAppInstanceToAPI(cancellationData);
+    await saveAppInstanceToAPI(cancellationData);
     const res = await saveAppInstanceToGoogleSheets(cancellationData);
     console.log({ res, cancellationData });
   } catch (error) {

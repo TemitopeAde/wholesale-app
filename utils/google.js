@@ -26,9 +26,9 @@ async function initializeGoogleSheets() {
 //   try {
 //     const SPREADSHEET_ID = sheet;
 //     const RANGE = 'new users!A1';
-    
+
 //     const sheets = await initializeGoogleSheets();
-    
+
 //     // Check if headers exist
 //     const headerResponse = await sheets.spreadsheets.values.get({
 //       spreadsheetId: SPREADSHEET_ID,
@@ -48,9 +48,9 @@ async function initializeGoogleSheets() {
 //         console.log('Headers added to sheet:', headers);
 //       }
 //     }
-    
+
 //     let values = [];
-    
+
 //     if (Array.isArray(instanceData)) {
 //       values = instanceData;
 //     } else if (typeof instanceData === 'object' && instanceData !== null) {
@@ -58,11 +58,11 @@ async function initializeGoogleSheets() {
 //     } else {
 //       values = [[instanceData]];
 //     }
-    
+
 //     const resource = {
 //       values: values,
 //     };
-    
+
 //     const response = await sheets.spreadsheets.values.append({
 //       spreadsheetId: SPREADSHEET_ID,
 //       range: RANGE,
@@ -70,9 +70,9 @@ async function initializeGoogleSheets() {
 //       insertDataOption: 'INSERT_ROWS',
 //       resource: resource,
 //     });
-    
+
 //     return response.data;
-    
+
 //   } catch (error) {
 //     console.error('Error saving to Google Sheets:', error.message);
 //     throw error;
@@ -84,16 +84,26 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
   try {
     const SPREADSHEET_ID = sheet;
     const targetSheet = instanceData?.sheet;
-    
+
     const { sheet: sheetName, ...dataToSave } = instanceData;
-    
+
     const sheets = await initializeGoogleSheets();
+
+    const existingResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: targetSheet,
+    });
+
+    console.log({existingResponse});
     
+
+    const existingRows = existingResponse.data.values || [];
+
     const headerResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: targetSheet,
     });
-    
+
     if (!headerResponse.data.values || headerResponse.data.values.length === 0) {
       const headers = Object.keys(dataToSave).map(key => {
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
@@ -105,9 +115,20 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
         resource: { values: [headers] },
       });
     }
-    
+
+
+    const isDuplicate = existingRows.some(row =>
+      row.includes(instanceData.instanceId) &&
+      row.includes(instanceData.action)
+    );
+
+    if (isDuplicate) {
+      console.log(`⚠️ Duplicate skipped for instanceId=${instanceData.instanceId}, action=${instanceData.action}`);
+      return { skipped: true };
+    }
+
     const values = [Object.values(dataToSave)];
-    
+
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: targetSheet,
@@ -115,9 +136,9 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
       insertDataOption: 'INSERT_ROWS',
       resource: { values },
     });
-    
+
     return response.data;
-    
+
   } catch (error) {
     console.error('Error saving to Google Sheets:', error.message);
     throw error;
@@ -144,7 +165,7 @@ async function clearSheet(sheetId) {
 
 async function testGoogleSheetsIntegration() {
   console.log('🧪 Starting Google Sheets integration test...');
-  
+
   const testData = {
     instanceId: "test-instance-" + Date.now(),
     appId: "58199573-6f93-4db3-8145-fd7ee8f9349c",
