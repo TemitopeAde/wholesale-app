@@ -35,7 +35,7 @@ const client = createClient({
 
 
 
-export function getWixClient(instanceId) {
+function getWixClient(instanceId) {
   if (!instanceId) {
     throw new Error('Missing instanceId');
   }
