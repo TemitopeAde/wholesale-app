@@ -28,7 +28,7 @@ const userSheet = {
 const client = createClient({
   auth: AppStrategy({
     appId: APP_ID,
-    publicKey: PUBLIC_KEY
+    publicKey: PUBLIC_KEY,
   }),
   modules: { appInstances }
 });
@@ -45,6 +45,7 @@ export function getWixClient(instanceId) {
       appId: APP_ID,
       publicKey: PUBLIC_KEY,
       instanceId: instanceId,
+      appSecret: "11ed0a28-57f3-46b6-88cb-a76a54b1a914"
     }),
     modules: {
       embeddedScripts,
