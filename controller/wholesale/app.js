@@ -264,6 +264,12 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
   console.log("=== AUTO RENEWAL CANCELLATION EVENT COMPLETE ===\n");
 });
 
+client.appInstances.onAppInstanceRemoved((event) => {
+  console.log(`onAppInstanceRemoved invoked with data:`, event);
+  console.log(`App instance ID:`, event.metadata.instanceId);
+
+});
+
 const handleWholesale = async (req, res) => {
 
   try {
