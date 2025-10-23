@@ -264,7 +264,7 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
   console.log("=== AUTO RENEWAL CANCELLATION EVENT COMPLETE ===\n");
 });
 
-const handleRotate = async (req, res) => {
+const handleWholesale = async (req, res) => {
 
   try {
     console.log("🔄 Processing webhook with Wix client...");
@@ -282,4 +282,4 @@ const handleRotate = async (req, res) => {
   console.log("=== WEBHOOK REQUEST COMPLETE ===\n");
 };
 
-module.exports = { handleRotate };
+module.exports = { handleWholesale };

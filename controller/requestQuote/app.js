@@ -57,6 +57,7 @@ function getWixClient(instanceId) {
 
 
 
+
 const scriptContent = `
   <script accesstoken="true" type="module">
   import { site } from "@wix/site";
