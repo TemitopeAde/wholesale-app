@@ -177,7 +177,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
   try {
     const res = await client.embeddedScripts.embedScript({
-      properties: scriptProperties,
+      properties: {},
     });
 
     console.log("Script embedded successfully.", res);
