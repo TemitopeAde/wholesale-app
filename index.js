@@ -197,18 +197,6 @@ const mapObjectToRow = (data) => {
   ];
 };
 
-function generateUniqueCode() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let uniqueCode = '';
-
-  for (let i = 0; i < 32; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    uniqueCode += characters[randomIndex];
-  }
-
-  return uniqueCode;
-}
-
 app.post('/payments', express.raw({ type: 'application/json' }), async (request, response) => {
   const sig = request.headers['stripe-signature'];  // Get the Stripe signature header
   const payload = request.body;  // The raw body sent by Stripe

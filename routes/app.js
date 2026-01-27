@@ -11,6 +11,8 @@ const { handleAds } = require("../controller/ads/app.js");
 const { handleRRS } = require("../controller/Rrs/app.js");
 const { handleAuction } = require("../controller/Auction/app.js");
 const { handleWholesale } = require("../controller/wholesale/app.js");
+const { handleCompare } = require("../controller/compare/app.js");
+const { handleGoogleMeet } = require("../controller/googleMeet/app.js");
 
 const router = express.Router();
 
@@ -27,6 +29,8 @@ router.post("/ads-display", handleAds)
 
 router.post("/rrs-webhook", handleRRS)
 router.post("/auction-webhook", handleAuction)
+router.post("/compare-webhook", handleCompare)
+router.post("/googlemeet-webhook", handleGoogleMeet)
 module.exports = router
 
 // https://wholesale-app.vercel.app/
