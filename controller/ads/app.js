@@ -264,6 +264,74 @@ client.appInstances.onAppInstancePaidPlanAutoRenewalCancelled(async (event) => {
   console.log("=== AUTO RENEWAL CANCELLATION EVENT COMPLETE ===\n");
 });
 
+client.appInstances.onAppInstancePlanConvertedToPaid(async (event) => {
+  console.log(`onAppInstancePlanConvertedToPaid invoked with data:`, event);
+  console.log(`App instance ID:`, event.metadata.instanceId);
+
+  const couponName = event.data?.couponName;
+  const cycle = event.data?.cycle;
+  const expiresOn = event.data?.expiresOn;
+  const invoiceId = event.data?.invoiceId;
+  const operationTimeStamp = event.data?.operationTimeStamp;
+  const vendorProductId = event.data?.vendorProductId;
+  const eventType = event.metadata?.eventType;
+  const identity = event.metadata?.identity;
+  const instanceId = event.metadata?.instanceId;
+
+  try {
+    const accessToken = await getAccessToken(APP_ID, instanceId);
+
+    const instanceResponse = await getInstanceDetails(accessToken);
+
+    const billing = instanceResponse?.data?.instance?.billing;
+    const email = instanceResponse?.data?.site?.ownerEmail;
+    const app = instanceResponse?.data?.instance?.appName;
+    const site = instanceResponse?.data?.site?.url;
+    const siteId = instanceResponse?.data?.site?.siteId;
+
+    const paidPlanData = {
+      instanceId: instanceId,
+      appId: APP_ID,
+      email: email || "",
+      app,
+      site,
+      siteId,
+      action: 'paid_plan_purchased',
+      isFree: false,
+      status: 'paid_plan_active',
+      timestamp: new Date().toISOString(),
+      timeStamp: billing?.timeStamp,
+      expirationDate: billing?.expirationDate,
+      active: true,
+      autoRenewing: billing?.autoRenewing,
+      couponName: couponName,
+      paymentCycle: cycle,
+      planExpiresOn: expiresOn,
+      invoiceId: invoiceId,
+      purchaseTimestamp: operationTimeStamp,
+      vendorProductId: vendorProductId,
+      eventType: eventType,
+      customerIdentity: identity
+    };
+
+    try {
+      saveAppInstanceToAPI(paidPlanData);
+      paidPlanData.sheet = userSheet.payments;
+      const res = await saveAppInstanceToGoogleSheets(paidPlanData);
+      console.log({ res, paidPlanData });
+    } catch (error) {
+
+      throw error;
+    }
+
+  } catch (error) {
+    console.log(error);
+
+  }
+
+  console.log("=== PAID PLAN PURCHASE EVENT COMPLETE ===\n");
+});
+
 const handleAds = async (req, res) => {
 
   try {
