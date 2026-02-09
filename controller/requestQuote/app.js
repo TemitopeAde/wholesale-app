@@ -481,6 +481,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 <header class="hero">
   <h1>Request a Quote App</h1>
   <p>Complete setup guide for installing, configuring, and using the Request a Quote Wix app with all its widgets and features.</p>
+  <a href="https://meetings-na2.hubspot.com/joey-digangi1/wix-app-demo" style="display: inline-block; margin-top: 24px; padding: 16px 40px; background: #fff; color: #7209b7; font-weight: 700; font-size: 1.15rem; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: transform 0.2s;">Book a Free Live Demo</a>
 </header>
 
 <div class="container">
