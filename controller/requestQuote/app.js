@@ -283,7 +283,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     .hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
     .hero p { font-size: 1.15rem; opacity: 0.9; max-width: 640px; margin: 0 auto; }
 
-    /* Layout */
+    /* Layout */f
     .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
     /* Table of Contents */
