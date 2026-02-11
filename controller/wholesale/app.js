@@ -274,7 +274,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                                         <tr>
                                             <td style="padding: 24px;">
                                                 <div style="width: 44px; height: 44px; border-radius: 10px; background: #ffe4e6; color: #e11d48; font-size: 20px; line-height: 44px; text-align: center; margin-bottom: 12px;">&#x1f4d6;</div>
-                                                <h3 style="font-size: 16px; font-weight: 650; color: #111827; margin: 0 0 8px;">PDF Catalogs</h3>
                                                 <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0;">Generate downloadable product catalogs with pricing customized for each access group. Share them with your wholesale buyers.</p>
                                             </td>
                                         </tr>
@@ -693,40 +692,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                     </td>
                 </tr>
 
-                <!-- PDF Catalog -->
-                <tr>
-                    <td style="padding-bottom: 20px;">
-                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
-                            <tr>
-                                <td style="padding: 20px 24px; border-bottom: 1px solid #f3f4f6;">
-                                    <h3 style="font-size: 18px; font-weight: 650; color: #111827; margin: 0; display: inline;">PDF Catalog Generator</h3>
-                                    <span style="font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; background: #d1fae5; color: #047857; margin-left: 10px;">Feature</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 24px;">
-                                    <p style="font-size: 14px; color: #4b5563; line-height: 1.65; margin: 0 0 16px;">Generate professional PDF product catalogs that you can share with your wholesale buyers.</p>
-
-                                    <h4 style="font-size: 15px; font-weight: 650; color: #1f2937; margin: 0 0 8px;">How to Generate a Catalog</h4>
-                                    <ol style="padding-left: 20px; margin: 0 0 16px;">
-                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;">Navigate to the <strong>Catalog</strong> tab.</li>
-                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;">Select an access group for group-specific pricing (optional).</li>
-                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;">Click <strong>Download Catalog</strong>.</li>
-                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65;">The system generates a formatted PDF with product data, images, and pricing.</li>
-                                    </ol>
-
-                                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
-                                        <tr><td style="padding: 14px 18px;">
-                                            <strong style="display: block; margin-bottom: 4px; font-size: 14px; color: #1f2937;">Tip</strong>
-                                            <span style="font-size: 13px; color: #4b5563;">Generate different catalogs for each access group to show tier-specific pricing. Send these directly to your wholesale buyers.</span>
-                                        </td></tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-
                 <!-- Notification Settings -->
                 <tr>
                     <td style="padding-bottom: 20px;">
@@ -974,12 +939,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                                             <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #10b981; font-weight: 700;">&#10003;</td>
                                             <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #10b981; font-weight: 700;">&#10003;</td>
                                         </tr>
-                                        <tr>
-                                            <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #4b5563;">PDF Catalog</td>
-                                            <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #10b981; font-weight: 700;">&#10003;</td>
-                                            <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #10b981; font-weight: 700;">&#10003;</td>
-                                            <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #10b981; font-weight: 700;">&#10003;</td>
-                                        </tr>
+                                       
                                         <tr>
                                             <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #4b5563;">Email Notifications</td>
                                             <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #10b981; font-weight: 700;">&#10003;</td>
