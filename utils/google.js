@@ -37,8 +37,8 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
       range: targetSheet,
     });
 
-    console.log({existingResponse});
-    
+    // console.log({existingResponse});
+
 
     const existingRows = existingResponse.data.values || [];
 
@@ -66,7 +66,7 @@ async function saveAppInstanceToGoogleSheets(instanceData) {
     );
 
     if (isDuplicate) {
-      console.log(`⚠️ Duplicate skipped for instanceId=${instanceData.instanceId}, action=${instanceData.action}`);
+      // console.log(`⚠️ Duplicate skipped for instanceId=${instanceData.instanceId}, action=${instanceData.action}`);
       return { skipped: true };
     }
 
@@ -100,14 +100,14 @@ async function clearSheet(sheetId) {
       range: 'new users!A:Z',
     });
 
-    console.log(`✅ Cleared all data from new users sheet`);
+    // console.log(`✅ Cleared all data from new users sheet`);
   } catch (error) {
     console.error('❌ Error clearing sheet:', error);
   }
 }
 
 async function testGoogleSheetsIntegration() {
-  console.log('🧪 Starting Google Sheets integration test...');
+  // console.log('🧪 Starting Google Sheets integration test...');
 
   const testData = {
     instanceId: "test-instance-" + Date.now(),
@@ -126,24 +126,24 @@ async function testGoogleSheetsIntegration() {
     autoRenewing: false
   };
 
-  console.log('📝 Test data created:', testData.instanceId);
+  // console.log('📝 Test data created:', testData.instanceId);
 
   try {
     await saveAppInstanceToGoogleSheets(testData);
-    console.log("✅ Google Sheets test completed successfully!");
+    // console.log("✅ Google Sheets test completed successfully!");
 
   } catch (error) {
-    console.log("❌ Test failed:", error);
+    // console.log("❌ Test failed:", error);
 
     if (error.message.includes('credentials')) {
-      console.log("💡 Tip: Make sure your credentials.json file is in the correct location");
+      // console.log("💡 Tip: Make sure your credentials.json file is in the correct location");
     }
     if (error.message.includes('SHEET_ID')) {
-      console.log("💡 Tip: Make sure you've set the SHEET_ID environment variable");
+      // console.log("💡 Tip: Make sure you've set the SHEET_ID environment variable");
     }
   }
 
-  console.log("=== TEST COMPLETE ===\n");
+  // console.log("=== TEST COMPLETE ===\n");
 }
 
 async function runTest() {
