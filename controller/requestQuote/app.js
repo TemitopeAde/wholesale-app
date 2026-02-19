@@ -103,28 +103,26 @@ async function sendEmail(
   subject,
   formObject
 ) {
+  console.log(`📤 [sendEmail] Attempting to send email to: ${recipient}`);
+  console.log(`📝 [sendEmail] Subject: ${subject}`);
   try {
     const url = "https://email-sender-chi-nine.vercel.app/api/v1/email";
-    const body = JSON.stringify({
+
+    const response = await axios.post(url, {
       email: recipient,
       subject: subject,
       data: formObject,
     });
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-
+    console.log(`✅ [sendEmail] Response status: ${response.status}`);
     if (response.status === 200 || response.status === 408) {
       return true;
     } else {
+      console.log(`⚠️ [sendEmail] Unexpected status: ${response.status}`);
       return false;
     }
   } catch (error) {
+    console.error(`❌ [sendEmail] Error sending email:`, error.response?.data || error.message);
     return false;
   }
 }
@@ -1049,9 +1047,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const emailPayload = { emailTemplate };
 
     try {
-      // sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
-      const res = sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", emailPayload);
-      console.log(JSON.stringify(res, null, 2));
+      // await sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
+      const res = await sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", emailPayload);
+      console.log("📧 Email result:", res);
 
     } catch (error) {
       console.log({ error });
