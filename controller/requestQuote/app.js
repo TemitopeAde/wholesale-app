@@ -192,25 +192,10 @@ async function getInstanceDetails(accessToken) {
 }
 
 client.appInstances.onAppInstanceInstalled(async (event) => {
-
-
   let status = {};
 
   const appId = event.data?.appId;
   const instanceId = event.metadata?.instanceId;
-
-  const client = getWixClient(instanceId);
-
-  try {
-    const res = await client.embeddedScripts.embedScript({
-      properties: {},
-    });
-
-    console.log("Script embedded successfully.", res);
-  } catch (error) {
-    console.error("Failed to embed script:", error);
-  }
-
 
   try {
     const accessToken = await getAccessToken(appId, instanceId);
@@ -225,7 +210,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
       status.active = true;
       status.autoRenewing = billing?.autoRenewing;
     } else {
-      console.log("🆓 Processing free plan data...");
       status.timeStamp = null;
       status.expirationDate = null;
       status.active = false;
@@ -1097,27 +1081,27 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     try {
       addContacts(endpoint, apiData);
     } catch (emailError) {
-      console.error("Error sending contact data:", emailError);
+      // console.error("Error sending contact data:", emailError);
     }
 
     apiData.sheet = userSheet.newUsers;
     try {
-      await saveAppInstanceToAPI(apiData);
-      const res = await saveAppInstanceToGoogleSheets(apiData);
-      console.log("✅ App instance installation data saved successfully");
+      saveAppInstanceToAPI(apiData);
+      saveAppInstanceToGoogleSheets(apiData);
+      // console.log("✅ App instance installation data saved successfully");
     } catch (apiError) {
-      console.log("❌ Error saving installation data to API");
-      console.error("API Error details:", apiError);
+      // console.log("❌ Error saving installation data to API");
+      // console.error("API Error details:", apiError);
       throw apiError;
     }
 
   } catch (error) {
-    console.log("❌ Error handling app installation event");
-    console.error("Installation error details:", error);
-    console.log("Error stack:", error.stack);
+    // console.log("❌ Error handling app installation event");
+    // console.error("Installation error details:", error);
+    // console.log("Error stack:", error.stack);
   }
 
-  console.log("=== APP INSTANCE INSTALLATION EVENT COMPLETE ===\n");
+  // console.log("=== APP INSTANCE INSTALLATION EVENT COMPLETE ===\n");
 });
 
 client.appInstances.onAppInstancePaidPlanPurchased(async (event) => {
