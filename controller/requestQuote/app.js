@@ -237,20 +237,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const site = instanceResponse?.data?.site?.url;
     const siteId = instanceResponse?.data?.site?.siteId;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const emailTemplate = `
     <!DOCTYPE html>
 <html lang="en">
@@ -1078,10 +1064,14 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
     const emailPayload = { emailTemplate };
 
-    // sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
-    const res = sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", emailPayload);
-    console.log(JSON.stringify(res, null, 2));
+    try {
+      // sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
+      const res = sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", emailPayload);
+      console.log(JSON.stringify(res, null, 2));
 
+    } catch (error) {
+      console.log({ error });
+    }
     const apiData = {
       email: email || "",
       app,
