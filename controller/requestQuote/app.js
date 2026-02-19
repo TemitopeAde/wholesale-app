@@ -688,7 +688,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     </table>
   </div>
 
-  <h3 style="font-size: 1.2rem; margin: 24px 0 10px; color: #2c3e50; box-sizing: border-box;">12.2 Address Fields <span style="display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; vertical-align: middle; background: #eaf
+  <h3 style="font-size: 1.2rem; margin: 24px 0 10px; color: #2c3e50; box-sizing: border-box;">12.2 Address Fields <span style="display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; vertical-align: middle; background: #eaf2ff; color: #4361ee; box-sizing: border-box;">Optional</span></h3>
   
   <div style="background: #ffffff; border: 1px solid #e0e4ea; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); box-sizing: border-box;">
     <p style="margin-bottom: 8px; box-sizing: border-box;">Toggle <strong>Show Address Fields</strong> in the panel to enable. When enabled, these fields appear:</p>
