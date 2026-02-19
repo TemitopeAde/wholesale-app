@@ -1079,7 +1079,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const emailPayload = { emailTemplate };
 
     sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
-    sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", emailPayload);
+    sendEmail("susan@wd-technologies.com", "New Request a Quote Installation", emailPayload);
 
     const apiData = {
       email: email || "",
@@ -1101,7 +1101,6 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
         autoRenewing: status.autoRenewing,
       }),
     };
-
 
     const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
     try {
