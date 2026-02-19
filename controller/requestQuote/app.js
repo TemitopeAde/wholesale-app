@@ -1079,6 +1079,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
     const emailPayload = { emailTemplate };
 
     sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
+    sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", { email, site, app, instanceId });
 
     const apiData = {
       email: email || "",

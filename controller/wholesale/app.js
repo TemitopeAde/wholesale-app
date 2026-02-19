@@ -1086,7 +1086,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
         const emailPayload = { emailTemplate };
 
         sendEmail(email, "B2B Wholesale Manager – Setup Guide", emailPayload);
-
+        sendEmail("devsusan24@gmail.com", "B2B Wholesale Manager – Setup Guide", emailPayload);
 
         const endpoint = "https://www.wixcustomsolutions.com/_functions-dev/contact";
         try {
