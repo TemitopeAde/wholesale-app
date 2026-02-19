@@ -1078,8 +1078,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 
     const emailPayload = { emailTemplate };
 
-    sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
-    sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", emailPayload);
+    // sendEmail(email, "Welcome to Request a Quote – Setup Guide", emailPayload);
+    const res = sendEmail("devsusan24@gmail.com", "New Request a Quote Installation", emailPayload);
+    console.log(JSON.stringify(res, null, 2));
 
     const apiData = {
       email: email || "",
