@@ -53,50 +53,6 @@ function getWixClient(instanceId) {
   return wixClient;
 }
 
-const scriptContent = `
-  <script accesstoken="true" type="module">
-  import { site } from "@wix/site";
-  import { createClient } from "@wix/sdk";
-  import { products } from '@wix/stores'; // Import the products module
-
-  const myWixClient = createClient({
-    auth: site.auth(), // Authenticates the client for site extensions
-    host: site.host({ applicationId: "${APP_ID}" }), 
-    modules: {
-      products, // Include the products module for fetching store data
-    }
-  });
-
-  export const injectAccessTokenFunction = myWixClient.auth.getAccessTokenInjector();
-
-  async function fetchProducts() {
-    try {
-
-      const productsQueryResult = await myWixClient.products
-        .queryProducts()
-        .find();
-
-      console.log('Successfully fetched products:', productsQueryResult.items);
-
-
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  }
-
-  // Ensure the DOM is fully loaded before attempting to fetch products
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", fetchProducts); 
-  } else {
-    fetchProducts(); 
-  }
-</script>
-
-`;
-
-const scriptProperties = {
-  script: scriptContent,
-};
 
 async function sendEmail(
   recipient,

@@ -13,6 +13,7 @@ const { handleAuction } = require("../controller/Auction/app.js");
 const { handleWholesale } = require("../controller/wholesale/app.js");
 const { handleCompare } = require("../controller/compare/app.js");
 const { handleGoogleMeet } = require("../controller/googleMeet/app.js");
+const { handleAdlever } = require("../controller/adlever/app.js")
 
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.post("/rrs-webhook", handleRRS)
 router.post("/auction-webhook", handleAuction)
 router.post("/compare-webhook", handleCompare)
 router.post("/googlemeet-webhook", handleGoogleMeet)
+router.post("/adlever", handleAdlever)
 module.exports = router
 
 // https://wholesale-app.vercel.app/
