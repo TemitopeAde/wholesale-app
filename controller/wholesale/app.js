@@ -175,7 +175,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
         };
 
         const emailTemplate = `
-        <!DOCTYPE html>
+                <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -190,7 +190,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
         <td align="center" style="padding: 48px 24px;">
             <span style="display: inline-block; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 999px; padding: 4px 16px; font-size: 13px; font-weight: 600; color: #3b82f6; margin-bottom: 20px;">User Guide v1.2</span>
             <h1 style="font-size: 36px; font-weight: 800; color: #111827; line-height: 1.15; max-width: 720px; margin: 0 auto 16px;">Manage Your Wholesale Business on Wix</h1>
-            <p style="font-size: 18px; color: #4b5563; max-width: 560px; margin: 0 auto 28px;">Create customer groups, set dynamic pricing rules, process wholesale applications, and generate catalogs &mdash; all from your Wix dashboard.</p>
+            <p style="font-size: 18px; color: #4b5563; max-width: 560px; margin: 0 auto 28px;">Create customer groups, set dynamic pricing rules, and process wholesale applications &mdash; all from your Wix dashboard.</p>
 
             <!-- Demo Button -->
             <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
@@ -273,9 +273,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px;">
                                         <tr>
                                             <td style="padding: 24px;">
-                                                <div style="width: 44px; height: 44px; border-radius: 10px; background: #ffe4e6; color: #e11d48; font-size: 20px; line-height: 44px; text-align: center; margin-bottom: 12px;">&#x1f4d6;</div>
-                                                <h3 style="font-size: 16px; font-weight: 650; color: #111827; margin: 0 0 8px;">PDF Catalogs</h3>
-                                                <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0;">Generate downloadable product catalogs with pricing customized for each access group. Share them with your wholesale buyers.</p>
+                                                <div style="width: 44px; height: 44px; border-radius: 10px; background: #ccfbf1; color: #0d9488; font-size: 20px; line-height: 44px; text-align: center; margin-bottom: 12px;">&#x2709;</div>
+                                                <h3 style="font-size: 16px; font-weight: 650; color: #111827; margin: 0 0 8px;">Automated Emails</h3>
+                                                <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0;">Automatically notify customers when their wholesale application is approved or rejected, and get alerts for new applications.</p>
                                             </td>
                                         </tr>
                                     </table>
@@ -284,9 +284,9 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px;">
                                         <tr>
                                             <td style="padding: 24px;">
-                                                <div style="width: 44px; height: 44px; border-radius: 10px; background: #ccfbf1; color: #0d9488; font-size: 20px; line-height: 44px; text-align: center; margin-bottom: 12px;">&#x2709;</div>
-                                                <h3 style="font-size: 16px; font-weight: 650; color: #111827; margin: 0 0 8px;">Automated Emails</h3>
-                                                <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0;">Automatically notify customers when their wholesale application is approved or rejected, and get alerts for new applications.</p>
+                                                <div style="width: 44px; height: 44px; border-radius: 10px; background: #e0f2fe; color: #0284c7; font-size: 20px; line-height: 44px; text-align: center; margin-bottom: 12px;">&#x1f69a;</div>
+                                                <h3 style="font-size: 16px; font-weight: 650; color: #111827; margin: 0 0 8px;">Shipping Rules</h3>
+                                                <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0;">Offer free shipping, flat-rate shipping, or threshold-based free shipping to specific wholesale access groups.</p>
                                             </td>
                                         </tr>
                                     </table>
@@ -476,19 +476,12 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                                 <td style="padding: 0 8px 0; width: 33%; vertical-align: top;">
                                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px;">
                                         <tr><td style="padding: 24px;">
-                                            <h3 style="font-size: 16px; font-weight: 650; color: #111827; margin: 0 0 8px;">Catalog</h3>
-                                            <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0;">Generate PDF product catalogs filtered by access group. Customize and download catalogs to share with your wholesale buyers.</p>
-                                        </td></tr>
-                                    </table>
-                                </td>
-                                <td style="padding: 0 0 0 8px; width: 33%; vertical-align: top;">
-                                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px;">
-                                        <tr><td style="padding: 24px;">
                                             <h3 style="font-size: 16px; font-weight: 650; color: #111827; margin: 0 0 8px;">Settings</h3>
                                             <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0;">Configure notification preferences: toggle alerts for new applications, quote requests, customer registrations, and other events.</p>
                                         </td></tr>
                                     </table>
                                 </td>
+                                <td style="padding: 0 0 0 8px; width: 33%; vertical-align: top; background: transparent;"></td>
                             </tr>
                         </table>
                     </td>
@@ -611,6 +604,53 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                     </td>
                 </tr>
 
+
+                <!-- Shipping Rules -->
+                <tr>
+                    <td style="padding-bottom: 20px;">
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+                            <tr>
+                                <td style="padding: 20px 24px; border-bottom: 1px solid #f3f4f6;">
+                                    <h3 style="font-size: 18px; font-weight: 650; color: #111827; margin: 0; display: inline;">Shipping Rules</h3>
+                                    <span style="font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; background: #dbeafe; color: #1d4ed8; margin-left: 10px;">Core</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 24px;">
+                                    <p style="font-size: 14px; color: #4b5563; line-height: 1.65; margin: 0 0 16px;">Shipping rules let you offer custom shipping rates to your wholesale customers. You can grant free shipping unconditionally, set a flat shipping fee, or make free shipping available once an order reaches a minimum value.</p>
+
+                                    <h4 style="font-size: 15px; font-weight: 650; color: #1f2937; margin: 0 0 8px;">Shipping Types</h4>
+                                    <ul style="padding-left: 20px; margin: 0 0 16px;">
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;"><strong>Free Shipping:</strong> Shipping is always free for eligible customers, regardless of order size.</li>
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;"><strong>Flat Rate:</strong> A fixed shipping fee is applied at checkout for eligible customers (e.g., $5 flat rate).</li>
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65;"><strong>Free Shipping Over $X:</strong> Free shipping is unlocked once the order subtotal reaches a specified minimum value (e.g., free shipping on orders over $200).</li>
+                                    </ul>
+
+                                    <h4 style="font-size: 15px; font-weight: 650; color: #1f2937; margin: 0 0 8px;">Targeting Customers</h4>
+                                    <p style="font-size: 14px; color: #4b5563; line-height: 1.65; margin: 0 0 8px;">Shipping rules use the same access group selector as pricing and MOQ rules:</p>
+                                    <ul style="padding-left: 20px; margin: 0 0 16px;">
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;"><strong>All Customers:</strong> Leave the Access Groups selector empty to apply the rule to all wholesale customers.</li>
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65;"><strong>Specific Groups:</strong> Select one or more access groups to restrict the shipping benefit to members of those groups only.</li>
+                                    </ul>
+
+                                    <h4 style="font-size: 15px; font-weight: 650; color: #1f2937; margin: 0 0 8px;">Managing Rules</h4>
+                                    <ul style="padding-left: 20px; margin: 0 0 16px;">
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;"><strong>Activate/Deactivate:</strong> Toggle a shipping rule on or off without deleting it.</li>
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65; margin-bottom: 4px;"><strong>Edit:</strong> Update the shipping type, rate, or threshold of an existing rule.</li>
+                                        <li style="font-size: 14px; color: #4b5563; line-height: 1.65;"><strong>Delete:</strong> Permanently remove a shipping rule.</li>
+                                    </ul>
+
+                                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
+                                        <tr><td style="padding: 14px 18px;">
+                                            <strong style="display: block; margin-bottom: 4px; font-size: 14px; color: #1f2937;">Tip</strong>
+                                            <span style="font-size: 13px; color: #4b5563;">Pair a "Free Shipping Over $X" rule with a minimum order value to incentivize larger orders while protecting your margins. For example, offer free shipping on orders over $300 for your Gold Tier group.</span>
+                                        </td></tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
 
                 <!-- CSV Bulk Pricing Upload -->
                 <tr>
@@ -1236,7 +1276,7 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
                                         </td></tr>
                                         <tr><td style="padding: 14px 0; border-bottom: 1px solid #f3f4f6;">
                                             <p style="font-weight: 600; color: #1f2937; margin: 0 0 6px; font-size: 15px;">I'm on the free plan. What are my limits?</p>
-                                            <p style="color: #4b5563; font-size: 14px; margin: 0;">On the free plan, you can create 1 pricing rule and 1 MOQ rule. All other features (access groups, customer management, applications, catalogs, notifications) are fully available. Upgrade to Pro or Business for unlimited rules.</p>
+                                            <p style="color: #4b5563; font-size: 14px; margin: 0;">On the free plan, you can create 1 pricing rule and 1 MOQ rule. All other features (access groups, customer management, applications, notifications) are fully available. Upgrade to Pro or Business for unlimited rules.</p>
                                         </td></tr>
                                         <tr><td style="padding: 14px 0; border-bottom: 1px solid #f3f4f6;">
                                             <p style="font-weight: 600; color: #1f2937; margin: 0 0 6px; font-size: 15px;">How do I add the wholesale application form to my website?</p>
@@ -1295,6 +1335,10 @@ client.appInstances.onAppInstanceInstalled(async (event) => {
 </html>
 
         `
+
+        
+        `
+
 
 //         const emailTemplate = `
 //         <!DOCTYPE html>
